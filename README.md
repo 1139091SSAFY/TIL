@@ -3,6 +3,5 @@
 
 ## Python
   *
-
-> ## SSAFY 11기 스타트캠프 (24. 01. 02. ~ 24. 01. 12)
-  * 
+## etc.
+* [SSAFY 11기 스타트캠프](directory/startcamp/startcamp.md)
