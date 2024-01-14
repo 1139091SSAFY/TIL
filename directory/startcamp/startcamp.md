@@ -41,6 +41,23 @@
       * Commit
         * 변경된 파일들을 저장하는 행위
         * 'snapshot'이라고도 함, 'version'과 거의 일치하는 개념
+  * 원격 저장소
+    * 코드와 버전 관리 이력을 온라인상의 특정 위치에 저장해, 여러 개발자가 협업하고 코드를 공유할 수 있는 저장 공간
+    * GitLab, GitHub, Bitbucket 등
+
+    ![image_2](image_02.jpg)
+
+    | Terminal Command | Comments |
+    | --- | --- |
+    | git init | 터미널이 가리키는 타겟 위치에 git 저장소(Working Directory) 생성 |
+    | git add | 파일에 변동사항이 발생 시 변동사항 저장 |
+    | git status | Working Directory와 Staging Area의 상태 |
+    | git add <file>... | Working Directory에 새로 생성한/변동사항이 있는 파일을 Staging Area에 추가 |
+    | git config | Commit 작성자 설정, --global로 설정 후 앞으로 재입력하지 않음 |
+    | git commit | Staging Area에 있는 파일을 저장소에 기록 → 해당 시점의 버전을 생성하고 변경 이력을 남기는 것 |
+    | git log | commit 내역(이력)을 보기
+
+
 
 * **기타 용어 정리**
   * Application
