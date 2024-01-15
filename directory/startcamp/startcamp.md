@@ -62,7 +62,7 @@
     ![image_2](image_02.jpg)
 
     | Terminal Command | Comments |
-    | --- | --- |
+    | :---: | --- |
     | git **init** | 터미널이 가리키는 타겟 위치에 git 저장소(Working Directory, .git) 생성<br>생성 후 폴더 및 하위 폴더에 git 저장소를 생성하면 안 됨 |
     | git **add** | 파일에 변동사항이 발생 시 변동사항 저장 |
     | git **status** | Working Directory와 Staging Area의 상태 |
