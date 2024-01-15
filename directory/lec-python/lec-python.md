@@ -4,7 +4,7 @@
 
 ## 1. 프로그래밍
   * 프로그래밍(Programming)  
-  
+
   * 프로그램 작성 - 프로그램 실행  
   
   * 프로그램은 몇 가지 기초 연산으로 구성  
@@ -56,17 +56,42 @@
     * 값이 어떤 종류의 데이터(숫자, 문자 등)인지, 어떻게 해석/처리되어야 하는지를 정의  
       * 값 : 피연산자  
       * 연산자 : 값에 적용할 수 있는 연산
-  >    데이터 타입<br><br>
-      (1) *Numeric Type* - int, float, complex<br>
-      (2) *Sequence Type* - list, tuple, range<br>
-      (3) *Text Sequence Type* - str<br>
-      (4) *Set Type* - set<br>
-      (5) *Mapping Type* - dict<br>
-      (6) *기타* - None, Boolean, Function 등<br>
+  * 데이터 타입
+    | N | Type | Contents |
+    | --- | --- | --- |
+    | 1 | *Numeric Type* | int, float, complex |
+    | 2 | *Sequence Type* | list, tuple, range |
+    | 3 | *Text Sequence Type* | str |
+    | 4 | *Set Type* | set |
+    | 5 | *Mapping Type* | dict |
+    | 6 | *기타* | None, Boolean, Function 등 |  
+
+  * 산술 연산자 및 연산자 우선순위
+    | 우선순위 | 연산자 | 연산자 설명 |
+    | :---: | :---: | --- |
+    | 높음 | ** | 지수, 거듭제곱 | 
+    | | - | 음수 부호 |
+    | | *, /, //, % | 곱셈, 나눗셈, 정수 나눗셈, 나머지 |
+    | 낮음 | +, - | 덧셈, 뺄셈 |
+    | |
 
 ## 5. 변수
-  * 변수(*variable*)
+  * 변수(*variable*)  
 
+    * 값을 참조하는 이름  
+
+    * 할당문 예시
+      ```python
+      degree = 36.5
+      ```  
+    * 변수명 규칙
+      * 영문 알파벳, 언더스코어(_), 숫자로 구성
+      * 숫자로 시작할 수는 없음
+      * 대소문자 구분함
+      * 변수명으로 쓰지 말아야 할 예약어(기본적으로 Python에 저장되어 사용되고 있는 값)
+      >  *False, None, True, \__peg_parser__, and, as ,assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, return, try, while, with, yield*
+
+<<< 공사중 >>>
 
       ```python
       variable = 'express'
