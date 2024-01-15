@@ -1,8 +1,8 @@
 # SSAFY 11기 스타트캠프
 
-<div style="text-align: right"> 24. 01. 02. ~ 24. 01. 12 </div>
+<div style="text-align: right"> 24. 01. 02. ~ 24. 01. 12 </div>  
 
-Index  
+## 0. Index  
   [1. Markdown](#1-markdown)  
   [2. CLI](#2-cli)  
   [3. 분산버전관리시스템 Git](#3-분산버전관리시스템-git)  
