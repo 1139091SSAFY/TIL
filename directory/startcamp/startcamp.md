@@ -57,6 +57,7 @@
     | git commit | Staging Area에 있는 파일을 저장소에 기록 → 해당 시점의 버전을 생성하고 변경 이력을 남기는 것 |
     | git log | commit 내역(이력)을 보기 |
     | git remote add origin (remote_repo_url) | Local data를 remote에 저장하기 위해, 어디로 보내야 하는지 원격 저장소 정보(주소 및 이름) 등록 필요시 사용하는 명령어, 로컬 저장소에 원격 저장소 주소 추가 |
+    | remote -v | 등록된 원격 저장소 목록 확인 |
 
 
 
