@@ -49,17 +49,21 @@
 
     | Terminal Command | Comments |
     | --- | --- |
-    | git init | 터미널이 가리키는 타겟 위치에 git 저장소(Working Directory) 생성 |
-    | git add | 파일에 변동사항이 발생 시 변동사항 저장 |
-    | git status | Working Directory와 Staging Area의 상태 |
-    | git add <file>... | Working Directory에 새로 생성한/변동사항이 있는 파일을 Staging Area에 추가 |
-    | git config | Commit 작성자 설정, --global로 설정 후 앞으로 재입력하지 않음 |
-    | git commit | Staging Area에 있는 파일을 저장소에 기록 → 해당 시점의 버전을 생성하고 변경 이력을 남기는 것 |
-    | git log | commit 내역(이력)을 보기 |
-    | git remote add origin (remote_repo_url) | Local data를 remote에 저장하기 위해, 어디로 보내야 하는지 원격 저장소 정보(주소 및 이름) 등록 필요시 사용하는 명령어, 로컬 저장소에 원격 저장소 주소 추가 |
-    | remote -v | 등록된 원격 저장소 목록 확인 |
-
-
+    | git **init** | 터미널이 가리키는 타겟 위치에 git 저장소(Working Directory) 생성 |
+    | git **add** | 파일에 변동사항이 발생 시 변동사항 저장 |
+    | git **status** | Working Directory와 Staging Area의 상태 |
+    | git **add** *[file]* | Working Directory에 새로 생성한/변동사항이 있는 파일을 Staging Area에 추가 |
+    | git **config** | Commit 작성자 설정, --global로 설정 후 앞으로 재입력하지 않음 |
+    | git **commit** | Staging Area에 있는 파일을 저장소에 기록 → 해당 시점의 버전을 생성하고 변경 이력을 남기는 것 |
+    | git **log** | commit 내역(이력)을 보기 |
+    | git **push** / **pull** or **clone** | 자료 동기화를 위한 커맨드 |
+    | git **push** -u *[origin]* master | 원격 저장소에 commit 목록을 업로드(내 local에 있는 master branch를 원하는 원격 저장소로 보내겠다) |
+    | git **clone** *[remote_repo_url]* | local의 commit이 없을 때 원격 저장소를 local로 가져옴<br>마지막에 .을 찍으면 폴더 새로 생성하지 않고 타겟 위치로 바로 가져옴 |
+    | git **pull** *[origin]* master | 원격 저장소의 변경사항만을 받아옴(업데이트)<br>충돌 이슈(auto merging - conflict)가 발생할 수 있기 때문에 확인을 위해 pull로 먼저 확인 |
+    | git **remote** *-v* | 등록된 원격 저장소 목록 확인 |
+    | git **remote** *add* *[origin]* *[remote_repo_url]* | Local data를 remote에 저장하기 위해, 어디로 보내야 하는지 원격 저장소 정보(주소 및 이름) 등록 필요시 사용하는 명령어, 로컬 저장소에 원격 저장소 주소 추가 |
+    | git **remote** *rm* *[origin]* | 원격 저장소 연결(등록) 삭제 |
+    | 
 
 
 * **기타 용어 정리**
