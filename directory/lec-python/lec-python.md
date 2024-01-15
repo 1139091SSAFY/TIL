@@ -1,9 +1,10 @@
-# Python 기초 문법 1
+# Fundamentals of Python
 
 <div style="text-align: right"> 24. 01. 15. </div>
 
-## 1. Programming
-  ### 프로그래밍
+## 1. 프로그래밍
+  * 프로그래밍(Programming)  
+  
   * 프로그램 작성 - 프로그램 실행  
   
   * 프로그램은 몇 가지 기초 연산으로 구성  
@@ -66,7 +67,7 @@
 ## 5. 변수
   * 변수(*variable*)
 
-  
+
       ```python
       variable = 'express'
       ```
