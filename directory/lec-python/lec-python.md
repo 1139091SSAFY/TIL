@@ -253,8 +253,287 @@
   
   * String Interpolation
     * 문자열 내에 변수나 표현식을 삽입하는 방법
+    * f-string : f / F 접두어와 {표현식}을 통해 문자열에 Python 표현식의 값을 삽입할 수 있음
+    ```python
+    bugs = 'roaches'
+    counts = 13
+    area = 'living room'
 
+    # Debugging roaches 13 living room
+    print(f'Debugging {bugs} {counts} {area}')
+    ```
+  
+  * 인덱스(index)
+    * 문자열의 sequence 특징
+    * sequence 내 값들에 대한 고유 번호로, 각 값의 위치를 식별하는 데 사용
+    * 0부터 시작하고, 슬라이싱 시 끝 지점 번호는 들어가지 않음
+    * Python은 음수 인덱스를 제공함
 
+  * 슬라이싱(slicing)
+    * sequence의 일부분을 선택해 추출하는 것
+    * 시작/끝 인덱스를 지정해, 해당 범위의 값으르 포함하는 새로운 sequence 생성
+
+  * 문자열은 불변(변경 불가)
+
+    ```python
+    my_str = 'hello'
+
+    # 인덱싱
+    print(my_str[1])  # e
+    print(my_str[-1]) # o
+
+    # 슬라이싱
+    print(my_str[2:4])  # ll
+    print(my_str[3:]) # lo
+    print(my_str[:3]) # hel
+    print(my_str[0:5:2])  # hlo
+    print(my_str[::-1]) # olleh
+
+    # 길이
+    print(len(my_str))  # 5
+
+    # TypeError: 'str' object does not support item assignment
+    my_str[1] = 'z'
+    ```
+
+  2. list
+  * **list** : 여러 개의 값을 순서대로 저장하는, 변경 가능한 sequence 자료형
+  * list 표현
+    * 0개 이상의 객체를 포함해 데이터 목록 저장
+    * [대괄호] 표기
+    * 데이터는 어떤 자료형도 저장 가능
+    * 타 언어에서 배열(array)과 같은 개념
+
+    ```python
+    my_list_1 = []
+    my_list_2 = [1, 'a', 3, 'b', 5]
+    my_list_3 = [1, 2, 3, 'Python', ['hello', 'world', '!!!']]
+    ```
+
+  * list의 sequence 특징
+    * 인덱싱, 슬라이싱, 길이
+    * list는 가변(변경 가능)
+
+    ```python
+    my_list = [1, 'a', 3, 'b', 5]
+
+    # 인덱싱
+    print(my_list[1]) # a
     
+    # 슬라이싱
+    print(my_list[2:4]) # [3, 'b', 5]
+    print(my_list[:3])  # [1, 'a', 3]
+    print(my_list[3:])  # ['b', 5]
+    print(my_list[0:5:2]) # [1, 3, 5]
+    print(my_list[::-1])  # [5, 'b', 3, 'a', 1]
+
+    # 길이
+    print(len(my_list)) # 5
+
+    # 가변성
+    my_list[0] = 100
+
+    print(my_list)  # [100, 'a', 3, 'b', 5]
+    ```
+
+  3. tuple
+* 여러 개의 값을 순서대로 저장하는, 변경 불가능한 sequence 자료형
+* tuple 표현
+  * 0개 이상의 객체 포함하면 데이터 목록 저장 - list와 같음
+  * (소괄호) 표기
+  * 데이터는 어떤 자료형도 저장 가능 - list와 같음
+* tuple의 sequence 특징
+  * 인덱싱, 슬라이싱, 길이
+  ```python
+  my_tuple_1 = ()
+  my_tuple_2 = (1, )  # tuple의 요소 수가 1 하나뿐일 경우 ,가 빠지면 int data가 된다.
+  my_tuple_3 = (1, 'a', 3, 'b', 5)
+  
+  # 인덱싱
+  print(my_tuple_3[1])  # 'a'
+
+  # 슬라이싱
+  # 슬라이싱한 결과도 tuple
+  print(my_tuple_3[2:4])  # (3, 'b')
+  print(my_tuple_3[:3]) # (1, 'a', 3)
+  print(my_tuple_3[3:]) # ('b', 5)
+  print(my_tuple_3[0:5:2])  # (1, 3, 5)
+  print(my_tuple_3[::-1]) # (5, 'b', 3, 'a', 1)
+
+  # 길이
+  print(len(my_tuple))  # 5
+  ```
+
+* tuple은 어디에 사용되나?
+  * tuple의 불변 특성을 활용 - 안전하게 여러 개의 값을 전달, 그룹화, 다중 할당 등
+  * 개발자가 직접 사용하기보다 'Python 내부 동작'에서 주로 사용됨
+
+  ```python
+  x, y = (10, 20)
+  
+  print(x)  # 10
+  print(y)  # 20
+
+  # Python은 쉼표를 tuple 생성자로 사용하니, 괄호는 생략이 가능하다
+  x, y = 10, 20
+  ```
+
+3. range
+* 연속된 정수 sequence를 생성하는, 변경 불가능한 자료형
+* 주로 반복문과 함께 사용
+* range 표현
+```python
+my_range_1 = range(5)
+my_range_2 = range(1, 10)
+
+print(my_range_1) # range(0, 5)
+print(my_range_2) # range(1, 10)
+
+# list로 변환 시 데이터 확인 가능
+print(list(my_range_1)) # [0, 1, 2, 3, 4]
+print(list(my_range_2)) # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+  ### 3. Non-Sequence Types - dict, set
+  * dict  
+    * *key-value 쌍*으로 이루어진, 순서와 중복이 없는, 변경 가능한 자료형
+    * dict 표현
+      * key는 변경 불가능한 자료형만 사용 가능(str, int, float, tuple, range, ...)
+      * value는 모든 자료형 사용 가능
+      * {중괄호} 표기
+
+    * dict 사용
+      * key를 통해 value에 접근 및 값 재할당 가능
+      * dict는 순서가 없음 → my_dict_3의 'list'는 '두번째 요소'가 아니기 때문에 인덱스로 접근이 불가
+      * 중복 불가 → 마지막으로 입력한 입력값으로 갱신
+
+```python
+my_dict_1 = {}
+my_dict_2 = {'key' : 'value'}
+my_dict_3 = {'apple' : 12, 'list' : [1, 2, 3]}
+
+print(my_dict_1)  # {}
+print(my_dict_2)  # {'key' : 'value'}
+print(my_dict_3)  # {'apple' : 12, 'list' : [1, 2, 3]}
+
+print(my_dict_3['apple']) # 12
+print(my_dict_3['list'])  # [1, 2, 3]
+
+# 값 변경
+my_dict_3['apple'] = 100
+print(my_dict_3)  # {'apple' : 100, 'list' : [1, 2, 3]}
+```
+
+  * set
+    * 순서와 중복이 없는, 변경 가능한 자료형
+      * key-value 쌍이 아님, 나머지는 dict와 동일
+    * set 표현
+      * 수학에서 집합과 동일한 연산 처리 가능 → 집합 연산에 활용
+      * {중괄호} 표기 - key-value 쌍이 아니라서 dict와 구분 가능
+      * 빈 set를 만들 때에는 set()를 활용해야 함
+      * 순서가 없다 → 'n번째 요소'라는 표현을 사용하지 않고, 인덱싱이 되지 않음
+
+```python
+my_set_1 = set()  # my_set = {}로 표현하면 set가 아닌 dict가 생성됨
+my_set_2 = {1, 2, 3}
+my_set_3 = {1, 1, 1}
+
+print(my_set_1) # set()
+print(my_set_2) # {1, 2, 3}
+print(my_set_3) # {1}
+
+# set의 집합 연산
+set_1 = {1, 2, 3}
+set_2 = {3, 6, 9}
+
+# 합집합
+print(set_1 | set_2)  # {1, 2, 3, 6, 9}
+
+# 차집합
+print(set_1 - set_2)  # {1, 2}
+
+# 교집합
+print(set_1 & set_2)  # {3}
+```
+
+
+  ### 4. Other Types
+  * None  
+    * Python에서 *값이 없음*을 나타내는 자료형  
+
+  * Boolean
+    * 참(True) / 거짓(False)을 표현하는 자료형
+    * 비교 / 논리 연산의 평가 결과로 사용
+    * 주로 조건 / 반복문과 함께 사용
+
+```python
+# None
+variable = None
+
+print(variable) # None
+
+# Boolean
+bool_1 = True
+bool_2 = False
+
+print(bool_1) # True
+print(bool_2) # False
+print(3 > 1)  # True
+print('3' != 3) # True
+```
+
+### 5. Collection
+* 여러 개의 항목 또는 요소를 담는 자료 구조를 통칭
+* Sequence / Non-Sequence의 공통점
+
+  | Collection | 변경 가능 여부 | 순서 여부 |
+  | :---: | :---: | :---: |
+  | str | X | O |
+  | list | O | O |
+  | tuple | X | O |
+  | set | O | X |
+  | dict | O | X |
+  | |
+
+### 6. Type Conversion - Implicit / Explicit  
+* Implicit Type Conversion 암시적 형변환  
+
+  * Python이 연산을 하며 자동으로 형변환하는 것  
+  * 가급적 나타나지 않도록 하는 것이 바람직함  
+
+* Explicit Type Conversion 명시적 형변환  
+  * 개발자가 직접 형변환하는 것
+  * 암시적 형변환이 아닌 경우를 모두 포함
+
+```python
+# Implicit Type Conversion
+
+  # int + float → float
+  print(3 + 5.0)  # 8.0
+
+  # Boolean + int → int
+  print(True + 3) # 4
+
+  # Boolean + Boolean → int
+  print(True + False) # 1
+
+# Explicit Type Conversion
+
+  # str → integer : 형식에 맞는 숫자만 가능
+  # integer → str : 모두 가능
+
+  print(int('1')) # 1
+  print(str(1) + '등')  # 1등
+  print(float('3.5')) # 3.5
+  print(int(3.5)) #3
+
+  # ValueError: invalid literal for int() with base 10: '3.5'
+  print(int('3.5'))
+  # string인 3.5가 int 형식에 맞지 않기 때문에 스스로 int로 변형되지 않는다.
+```
+
+
+
+
 <<< 공사중 >>>
 
