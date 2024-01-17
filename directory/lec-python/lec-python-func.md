@@ -378,48 +378,48 @@ def make_sum(pram1, pram2):
 
   1. map(function, iterable)  
 
-    * function : 함수  
+      * function : 함수  
 
-    * iterable : 반복 가능한 요소(ex. sequence(str, list, tuple 등))  
+      * iterable : 반복 가능한 요소(ex. sequence(str, list, tuple 등))  
 
-    * 순회 가능한 데이터 구조(iterable)의 모든 요소를 함수에 적용하고, 그 결과를 map object로 반환
+      * 순회 가능한 데이터 구조(iterable)의 모든 요소를 함수에 적용하고, 그 결과를 map object로 반환
 
-    ```python
-    numbers = [1, 2, 3]
-    result = map(str, numbers)
+      ```python
+      numbers = [1, 2, 3]
+      result = map(str, numbers)
 
-    print(result) # <map object at 0x00000239C915D760>
-    print(list(result)) # ['1', '2', '3']
-    ```
-    
-    * map 함수의 반환값은 map 객체(map object)이기 때문에, 사용을 위해 이 객체를 바꿔줘야 함(list 등)
+      print(result) # <map object at 0x00000239C915D760>
+      print(list(result)) # ['1', '2', '3']
+      ```
+      
+      * map 함수의 반환값은 map 객체(map object)이기 때문에, 사용을 위해 이 객체를 바꿔줘야 함(list 등)
 
-    ```python
-    numbers = input().split() # 1 2 3 4 5
+      ```python
+      numbers = input().split() # 1 2 3 4 5
 
-    print(numbers)  # ['1', '2', '3', '4', '5']
+      print(numbers)  # ['1', '2', '3', '4', '5']
 
-    result = map(int, numbers)
+      result = map(int, numbers)
 
-    print(result) # <map object at 0x000001EC92074FA0>
+      print(result) # <map object at 0x000001EC92074FA0>
 
-    print(list(result)) # [1, 2, 3, 4, 5]
-    ```
+      print(list(result)) # [1, 2, 3, 4, 5]
+      ```
 
   2. zip(*iterables)  
 
-    * 임의의 iterable을 모아 tuple을 원소로 하는 zip object 반환  
+      * 임의의 iterable을 모아 tuple을 원소로 하는 zip object 반환  
 
-    * 가변 인자를 받을 수 있는 함수(*iterables)
+      * 가변 인자를 받을 수 있는 함수(*iterables)
 
-    ```python
-    girls = ['jane', 'ashley']
-    boys = ['peter', 'jay']
-    pair = zip(girls, boys)
-    
-    print(pair) # <zip object at 0x000001C76DE58700>
-    print(list(pair)) # [('jane', 'peter'), ('ashley', 'jay')]
-    ```
+      ```python
+      girls = ['jane', 'ashley']
+      boys = ['peter', 'jay']
+      pair = zip(girls, boys)
+      
+      print(pair) # <zip object at 0x000001C76DE58700>
+      print(list(pair)) # [('jane', 'peter'), ('ashley', 'jay')]
+      ```
 
 ## 9. lambda 함수  
 
