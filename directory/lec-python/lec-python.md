@@ -1,6 +1,6 @@
 # Fundamentals of Python
 
-<div style="text-align: right"> 24. 01. 15. </div>
+<div style="text-align: right"> 24. 01. 15. ~ 24. 01. 16. </div>
 
 ## 1. 프로그래밍
   * 프로그래밍(Programming)  
