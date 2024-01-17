@@ -86,7 +86,7 @@ def make_sum(pram1, pram2):
     """입력된 이름 값에
     인사를 하는 메시지를 만드는 함수
     """
-    mesage = 'Hello, ' + name
+    message = 'Hello, ' + name
     return message
 
   # 함수 호출
@@ -503,7 +503,8 @@ def make_sum(pram1, pram2):
       print(a, b, c, d, e)  # 1 2 3 4 5
 
       # *는 list의 요소를 unpacking
-      names = ['alice', ]
+      names = ['alice', 'jane', 'peter']
+      print(*names) # alice jane peter
 
       # **는 dict의 key-value쌍 값을 함수의 키워드 인자로 unpacking
       def my_function(x, y, z):
