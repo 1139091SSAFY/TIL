@@ -105,12 +105,12 @@
 
     ```python
     # .index(x)
-    # x의 첫 번째 위치를 반환. 없으면, 오류 발생 반환
+    # x의 첫 번째 위치를 반환. 없으면 오류 발생 반환
     print('banana'.index('a'))  # 1
     print('banana'.index('z'))  # ValueError: substring not found
 
     # .find(x)
-    # x의 첫 번째 위치를 반환. 없으면, -1을 반환
+    # x의 첫 번째 위치를 반환. 없으면 -1을 반환
     print('banana'.find('a')) # 1
     print('banana'.find('z')) # -1
 
@@ -151,7 +151,7 @@
     new_text = text.replace('world', 'Python')
     print(new_text) # Hello, Python!
 
-    # .strip([chars]) : str의 시작과 끝에 있는 공백 혹으느 지정한 문자 제거
+    # .strip([chars]) : str의 시작과 끝에 있는 공백 혹은 지정한 문자 제거
     text = '   Hello, world!   '
     new_text = text.strip()
     print(new_text) # Hello, world!
@@ -193,7 +193,7 @@
     | L.append(x) | 리스트 마지막에 항목 x를 추가 |
     | L.extend(m) | Iterable m의 모든 항목들을 리스트 끝에 추가 (+=과 같은 기능) |
     | L.insert(i, x) | 리스트 인덱스 i에 항목 x를 삽입 	|
-    | L.remove(x) | 리스트 가장 왼쪽에 있는 항목(첫 번째) x를 제거 항목이 존재하지 않을 경우,   ValueError |
+    | L.remove(x) | 리스트 가장 왼쪽에 있는 항목(첫 번째) x를 제거 항목이 존재하지 않을 경우, ValueError |
     | L.pop() | 리스트 가장 오른쪽에 있는 항목(마지막)을 반환 후 제거 |
     | L.pop(i) | 리스트의 인덱스 i에 있는 항목을 반환 후 제거 |
     | L.clear() | 리스트의 모든 항목 삭제	|
@@ -240,12 +240,13 @@
 
   * list 탐색 및 정렬 method  
 
-    |               문법              	|                                   설명                                 	|
-    |:-------------------------------:	|:----------------------------------------------------------------------:	|
-    |     L.index(x,   start, end)    	|     리스트에   있는 항목 중 가장 왼쪽에 있는 항목 x의 인덱스를 반환    	|
-    |            L.reverse()          	|     리스트의 순서를 역순으로 변경 (정렬 X)|
-    |             L.sort()            	|     리스트를 정렬 (매개변수   이용가능)                                	|
-    |            L.count(x)           	|     리스트에서 항목   x의 개수를 반환                                  	|
+    | 문법 | 설명 |
+    | :-------------------------------: | :----------------------------------------------------------------------: |
+    | L.index(x, start, end) | 리스트에 있는 항목 중 가장 왼쪽에 있는 항목 x의 인덱스를 반환 |
+    | L.reverse() | 리스트의 순서를 역순으로 변경 (정렬 X) |
+    | L.sort() | 리스트를 정렬 (매개변수   이용가능) |
+    | L.count(x) | 리스트에서 항목 x의 개수를 반환 |
+    | |
 
     ```python
     # .index(x) : list에서 첫 번째로 일치하는 항목의 인덱스 반환
