@@ -288,7 +288,7 @@
     print(b)  # [100, 2, 3, 4]
     ```
 
-    ![local image](../../image/lec-python-data_structure-1.png)
+    ![local image](image/lec-python-data_structure-1.png)
 
   * 변경 불가능한 데이터 타입의 복사
 
@@ -301,7 +301,7 @@
     print(b)  # 10
     ```
 
-    ![local image](../../image/lec-python-data_structure-2.png)
+    ![local image](image/lec-python-data_structure-2.png)
 
   * 복사 유형
 
@@ -316,7 +316,7 @@
       print(original_list, copy_list) # ['hi', 2, 3] ['hi', 2, 3]
       ```
 
-      ![local image](../../image/lec-python-data_structure-3.png)
+      ![local image](image/lec-python-data_structure-3.png)
 
       * 할당 연산자(=)를 통한 복사는 해당 객체에 대한 **객체 참조를 복사**
 
@@ -331,7 +331,7 @@
       print(a, b) # [1, 2, 3] [100, 2, 3]
       ```
 
-      ![local image](../../image/lec-python-data_structure-4.png)
+      ![local image](image/lec-python-data_structure-4.png)
 
       * 슬라이싱을 통해 생성된 객체는 원본 객체와 독립적으로 존재
 
@@ -347,7 +347,7 @@
         print(a, b) # [1, 2, [100, 2]] [1, 2, [100, 2]]
         ```
 
-        ![local image](../../image/lec-python-data_structure-5.png)
+        ![local image](image/lec-python-data_structure-5.png)
 
         * a와 b의 주소는 다르지만 내부 객체의 주소는 같기 때문에 함께 변경됨
     
@@ -365,7 +365,7 @@
       print(deep_copied_list) # [1, 2, [100, 2]]
       ```
 
-      ![local image](../../image/lec-python-data_structure-6.png)
+      ![local image](image/lec-python-data_structure-6.png)
 
       * 내부에 중첩된 모든 객체까지 새로운 객체 주소를 참조하도록 함
 
