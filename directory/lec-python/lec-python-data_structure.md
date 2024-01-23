@@ -1,6 +1,6 @@
 # Data Structures
 
-<div style="text-align: right"> 24. 01. 22. </div>
+<div style="text-align: right"> 24. 01. 22. ~ 24. 01. 23. </div>
 
 ## 1. 데이터 구조  
 
@@ -51,9 +51,9 @@
 
   * 특징
 
-    * method는 class 내부에 정의되는(class 어딘가에 속해 있는) 함수
+    * **method는 class 내부에 정의되는(class 어딘가에 속해 있는) 함수**
 
-    * 각 data type별로 다양한 기능을 가진 method가 존재
+    * **각 data type별로 다양한 기능을 가진 method가 존재**
 
     * 예를 들어 help 함수를 통해 str을 호출해보면 class 였다는 것을 확인 가능
 
@@ -89,7 +89,7 @@
   ```
 
 
-## 3. 시퀀스 데이터 구조(Sequence Data Structure)
+## 3. 시퀀스 데이터 구조(Sequence Data Structure) - string, list
 
   * string 조회/탐색 및 검증 method  
 
@@ -370,10 +370,119 @@
 
       * 내부에 중첩된 모든 객체까지 새로운 객체 주소를 참조하도록 함
 
+## 5. 비시퀀스 데이터 구조 (非Sequence Data Structure) - set, dictionary
 
-## 000. 참고 자료
+  * set
+
+    * 집합 연산에서 자주 활용
+
+    * 데이터에 중복이 없고(고유하고), 정렬되지 않은(Non-sequence, 인덱싱으로 접근이 불가능한) collection
+
+    | Method | 설명 |
+    | :---: | :---: |
+    | s.add(x) | set s에 항목 x를 추가. 이미 x가 있다면 변화 없음 |
+    | s.clear() | set s의 모든 항목을 제거 |
+    | s.remove(x) | set s에서 항목 x를 제거.<br>항목 x가 없을 경우 Key error |
+    | s.pop(x) | set s에서 랜덤하게 항목을 반환하고, 해당 항목을 제거<br>요소간 확률에 차이가 발생함(후술) |
+    | s.discard(x) | set s에서 항목 x를 제거.<br>remove와 달리 error가 없음 |
+    | s.update(iterable) | set s에 다른 iterable 요소를 추가 |
+    | |
+
+    ```python
+    # .add(x) : set에 x를 추가
+    # 이미 x가 있다면 변화 없음
+    my_set = {'a', 'b', 'c', 1, 2, 3}
+
+    my_set.add(4)
+    print(my_set) 
+                      
+    my_set.add(4)
+    print(my_set)
+
+    # .clear() : set의 모든 항목 제거
+    my_set = {'a', 'b', 'c', 1, 2, 3}
+
+    my_set.clear()
+    print(my_set)
+
+    # .remove(x) : set에서 항목 x를 제거
+    # 항목 x가 없을 경우 Key error
+    my_set = {'a', 'b', 'c', 1, 2, 3}
+
+    my_set.remove(2)
+    print(my_set) 
+
+    my_set.remove(10)
+    print(my_set) 
+
+    # .discard(x) : set s에서 항목 x를 제거. remove와 달리 error가 없음
+    my_set = {1, 2, 3}
+
+    my_set.discard(2)
+    print(my_set)
+
+    my_set.discard(10)
+
+    # .pop() : set에서 임의의 요소를 제거하고 반환
+    my_set = {'a', 'b', 'c', 1, 2, 3}
+
+    element = my_set.pop()
+
+    print(element)
+    print(my_set) 
+
+    # .update(iterable) : set에 다른 iterable 요소 추가
+    my_set = {'a', 'b', 'c', 1, 2, 3}
+
+    my_set.update([1, 4, 5])
+    print(my_set)
+    ```
+
+    * set의 집합 method
+
+    | Method | 설명 | 연산자 |
+    | :---: | :---: | :---: |
+    | set1.difference(set2) | set1에는 들어있지만 set2에는 없는 항목으로 세트를 생성 후 반환 | set1 – set2 |
+    | set1.intersection(set2) | set1과 set2 모두 들어있는 항목으로 세트를 생성 후 반환 | set1 & set 2 |
+    | set1.issubset(set2) | set1의 항목이 모두 set2에 들어있으면 True를 반환 | set1 <= set2 |
+    | set1.issuperset(set2) | set1가 set2의 항목을 모두 포함하면 True를 반환 | set1 >= set2 |
+    | set1.union(set2) | set1 또는 set2에(혹은 둘 다) 들어있는 항목으로 세트를 생성 후 반환 | set1 \| set2 |
+
+    ```python
+    set1 = {0, 1, 2, 3, 4}
+    set2 = {1, 3, 5, 7, 9}
+
+    print(set1.difference(set2))  # {0, 2, 4}
+    print(set1.intersection(set2))  # {1, 3}
+    print(set1.issubset(set2))  # False
+    print(set1.issuperset(set2))  # False
+    print(set1.union(set2)) #{0, 1, 2, 3, 4, 5, 7, 9}
+    ```
+
+  * dictionary
+
+    * 고유한 항목들(중복이 없는)의, 정렬되지 않은 key - value형 data collection
+
+    | Method | 설명 |
+    | :---: | :---: |
+    | D.clear() | 딕셔너리 D의 모든 키/값 쌍을 제거 | | D.get(k) | 키 k에 연결된 값을 반환<br>(키가 없으면 None을 반환) |
+    | D.get(k, v) | 키 k에 연결된 값을 반환하거나 키가 없으면 None 혹은 기본 값으로 v를 반환 |
+    | D.keys() | 딕셔너리 D의 키를 모은 객체를 반환<br>type(D.keys()) : dict_keys → list(D.keys())로 변환 가능 |
+    | D.values() | 딕셔너리 D의 값을 모은 객체를 반환 |
+    | D.items() | 딕셔너리 D의 키/값 쌍을 모은 객체를 반환 |
+    | D.pop(k) | 딕셔너리 D에서 키 k를 제거하고 연결됐던 값을 반환 (없으면 오류) |
+    | D.pop(k, v) | 딕셔너리 D에서 키 k를 제거하고 연결됐던 값을 반환<br>(없으면 v를 반환) |
+    | D.setdefault(k) | 딕셔너리 D에서 키 k와 연결된 값을 반환 |
+    | D.setdefault(k, v) | 딕셔너리 D에서 키 k와 연결된 값을 반환<br>k가 D의 키가 아니면 값 v와 연결한 키 k를 D에 추가하고 v를 반환 |
+    | D.update(other) | other 내 각 키에 대해 D에 있는 키면 D에 있는 그 키의 값을 other에 있는 값으로 대체.<br>other에 있는 각 키에 대해 D에 없는 키면 키/값 쌍을 D에 추가 |
+    | |
+
+
+## 6. 참고 자료
 
   * 문자열에 포함된 문자들의 유형을 판별하는 method
+  
+    * is~로 시작하는 method : return이 T/F
 
     * isdecimal()
 
@@ -389,8 +498,145 @@
 
       * 분수, 지수, 루트 기호도 숫자로 인식
 
+  * 해시 테이블 (Hash Table)
+
+    * 해시 함수를 사용해, 변환한 값을 인덱스로 삼아 key와 data(value)를 저장하는 자료 구조
+
+    * data를 효율적으로 저장하고 검색하기 위해 사용
+
+    ```python
+    dict = {
+      'John': '521-1234',
+      'Lisa': '521-8976',
+      'Sandra': '521-9655'
+    }
+    ```
+    ![local image](image/lec-python-data_structure-7.PNG)
+
+      * key를 해시 함수를 통해 해시 값으로 변환하고, 이 해시 값을 인덱스로 사용해 데이터를 저장하거나 검색
+
+      * 데이터 검색이 매우 빠르게 이루어짐
+
+    * 해시 (Hash)
+
+      * 임의의 크기를 가진 데이터를, 고정된 크기의 고유한 값으로 변환하는 것
+
+      * 이렇게 생성한 고유값은 주로 해당 데이터를 식별하는 데 사용될 수 있음 → 일종의 '지문' 역할
+
+      * Python에서는 해시 함수를 사용해 데이터를 해시 값으로 변환하며, 이 해시 값은 정수로 표현됨
+
+    * 해시 함수 (Hash function)
+
+      * 임의의 길이의 데이터를 입력받아, 고정된 길이의 데이터(해시 값)를 출력하는 함수
+
+      * 주로 해시 테이블 자료구조에 사용되며, 매우 빠른 데이터 검색을 위한 컴퓨터 SW에서 유용하게 사용
+
+    * set의 요소 & dictionary의 key와 해시 테이블 관계
+
+      * Python에서 set의 요소와 dictionary의 key는 해시 테이블을 이용해 중복되지 않는 고유한 값을 저장
+
+        * set 내 각 요소는 해시 함수를 통해 해시 값으로 변환되고, 이 해시 값을 기반으로 해시 테이블에 저장
+
+        * dictionary의 key는 고유해야 하므로, key를 해시 함수를 통해 해시 값으로 변환해 해시 테이블에 저장 → dictionary의 key는 매우 빠른 탐색 속도를 제공하며, 중복값을 허용하지 않음
+
+    * Python에서의 해시 함수
+
+      | case | explanation |
+      | :--- | :--- |
+      | 정수 | ■ 같은 정수는 항상 같은 해시 값을 가짐<br> ■ 해시 테이블에 정수를 저장할 때 효율적인 방법<br> ■ 예를 들어, hash(1)과 hash(2)는 항상 서로 다른 해시 값을 갖지만, hash(1)은 항상 동일한 해시 값을 갖게 됨 |
+      | 문자열 | ■ 문자열은 가변적인 길이를 갖고 있고, 문자열에 포함된 각 문자들의 유니코드 코드 포인트 등을 기반으로 해시 값 계산<br> ■ 이로 인해, 문자열의 해시 값은 실행 시마다 다르게 계산됨 |
+      | |
+
+    * set의 pop method의 결과와 해시 테이블의 관계
+
+      * pop method는 set에서 임의의 요소를 제거하고 반환
+
+      * 실행할 때마다 다른 요소를 얻는다는 의미에서의 *무작위*가 아니라, *"임의"*라는 의미에서의 *"무작위"* → By "arbitrary" the docs don't mean "random"
+
+      * 해시 테이블에 나타나는 순서대로 반환하는 것
+
+    * hashable
+
+      * hash() 함수의 인자로 전달해서 결과를 반환받을 수 있는 객체를 hashable이라고 함
+
+      * 대부분의 불변형 데이터 타입은 hashable
+
+      * 단, tuple의 경우 불변형이지만 해시 불가능한 객체를 참조할 때는 tuple 자체도 해시 불가능해지는 경우가 있음
+
+      ```python
+      print(hash(1))
+      print(hash(1.0))
+      print(hash('1'))
+      print(hash((1, 2, 3)))
+
+      # TypeError: unhashable type: 'list'
+      print(hash((1, 2, [3, 4])))
+      ```
+
+      * *해시 테이블의 키는 불변해야 함* → 객체 생성 후에 그 값을 변경할 수 없어야 함
+
+      * 불변 객체는 해시 값이 변하지 않으므로, 동일한 값에 대해 일관된 해시 값을 유지할 수 있음
+
+        * 단, "hash 가능하다 != 불변하다"
+
+      * 가변형 객체가 hashable하지 않은 이유
+        
+        * 값이 변경될 수 있기 때문에, 동일한 객체에 대한 해시 값이 변경될 가능성이 있음 → 해시 테이블의 무결성 유지 불가
+
+        * 가변형 객체가 변경되면 해시 값이 변경되기 때문에, 같은 객체에 대한 서로 다른 해시 값이 반환될 수 있음 → 해시 값의 일관성 유지 불가
+    
+        ```python
+        # TypeError: unhashable type: 'list'
+        print(hash([1, 2, 3]))
+
+        # TypeError: unhashable type: 'list'
+        my_set = {[1, 2, 3], 1, 2, 3, 4, 5}
+
+        # TypeError: unhashable type: 'set'
+        my_set = {{3, 2}: 'a'}
+        ```
+
+    * hashable 객체가 필요한 이유
+
+      1. 해시 테이블 기반 자료 구조 사용
+
+        * set와 dict의 key
+
+        * 중복 값 방지
+
+        * 빠른 검색과 조회
+
+      2. 불변성을 통한 일관된 해시 값
+
+      3. 안정성과 예측 가능성 유지
+
+## 7. 메모
+
   * [배커스-나우르 표기법(Backus-Naur form, BNF)](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form)
 
     * 당신이 어떤 프로그래밍 언어(문법)을 쓰던 간에 이 표기법을 활용해 설명하자(표기법).
 
     * 기계가 읽을 수 있는(machine-readable) 형식의 문법을 명확히 정의 또는 표준화하기 위해 사용된다.
+
+
+  * 해시
+
+    * set / dictionary → 검색 성능
+    
+    * 자료 수가 증가하면 → 검색 시간 또한 자료 수에 비례해 증가
+
+    ```python
+    lst = {10, 1, 4, 5, 9, 123, ...}
+    key = 4653
+
+    # 내부에서 for문이 도는 case → 자료가 10만, 100만 개가 되면 시간이 오래 걸릴 것
+    for val in lst:
+      if key == val:
+        print('찾았다')
+
+    # key 값을 hash로 찾는 경우
+    if key in lst:  # membership 연산자
+      print('찾았다')
+    # list에서 membership을 사용하는 경우는 for문을 사용하는 것과 같기 때문에 시간이 오래 걸릴 것
+    
+    ```
