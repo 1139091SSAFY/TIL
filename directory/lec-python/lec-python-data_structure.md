@@ -182,7 +182,7 @@
       print(new_text4)  # HEllO, WOrLD!
 
       # method 이어서 사용하기
-      new_text = text.swapcase().reloace('l', 'z')
+      new_text = text.swapcase().replace('l', 'z')
       print(new_text) # HEzzO, WOrLD!
       ```  
 
