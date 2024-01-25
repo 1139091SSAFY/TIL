@@ -487,9 +487,412 @@ print(MyClass.static_method())  # static method
 
   * Python은 이를 막아놓지는 않아, 경우에 따라 좀 더 유연한 코딩이 가능하게 함
 
-## 8. 참고 문서
+## 8. 상속 (Inheritance)
 
-  * 매직 메서드 (스페셜 메서드)
+  * 기존 클래스의 속성과 메서드를 물려받아 새로운 하위 클래스를 생성하는 것
+
+  * 상속이 필요한 이유
+
+    1. 코드 재사용
+    
+      * 상속을 통해 기존 클래스의 속성과 메서드를 재사용 가능
+
+      * 새로운 클래스를 작성할 때 기존 클래스의 기능을 그대로 활용할 수 있고, 중복된 코드를 줄일 수 있음
+
+    2. 계층 구조
+
+      * 상속을 통해 클래스들 간의 계층 구조를 형성
+
+      * 부모 클래스와 자식 클래스 간의 관계를 표현하고, 더 구체적인 클래스를 만들 수 있음
+
+    3. 유지 / 보수의 용이성
+
+      * 상속을 통해 기존 클래스의 수정이 필요한 경우, 해당 클래스만 수정하면 되므로 유지 / 보수가 용이
+
+      * 코드의 일관성을 유지하고, 수정이 필요한 범위를 최소화
+
+  ```python
+  # 상속 없이 구현하는 경우
+  class Person:
+    def __init__(self, name, age):
+      self.name = name
+      self.age = age
+
+    def talk(self):
+      print(f'반갑습니다. {self.name}입니다')
+
+  s1 = Person('김학생', 23)
+  s1.talk() # 반갑습니다. 김학생입니다.
+
+  p1 = Person('박교수', 59)
+  p1.talk() # 반갑습니다. 박교수입니다.
+  ```
+
+  ```python
+  # 상속을 활용하는 경우
+  class Person:
+      def __init__(self, name, age):
+          self.name = name
+          self.age = age
+
+      def talk(self):
+          print(f'반갑습니다. {self.name}입니다.')
+
+  class Professor(Person):
+      def __init__(self, name, age, department):
+          self.name = name
+          self.age = age
+          self.department = department
+
+  class Student(Person):
+      def __init__(self, name, age, gpa):
+          self.name = name
+          self.age = age
+          self.gpa = gpa
+
+  p1 = Professor('박교수', 59, '컴퓨터공학과')
+  s1 = Student('김학생', 20, 3.5)
+
+  print(p1.department)  # 컴퓨터공학과
+  print(s1.gpa) # 3.5
+
+  # 클래스 간 상속도 마찬가지로, 자식 클래스의 인스턴스 내에 함수 / 요소가 없다면
+  # 부모 클래스에서 해당 요소를 찾아 실행한다.
+  p1.talk() # 반갑습니다. 박교수입니다.
+  s1.talk() # 반갑습니다. 김학생입니다.
+
+  # 상속 관계가 없었다면, Professor / Student 클래스 각각에 talk 함수를 일일이 만들었어야 했을 것
+  ```
+
+  * super()
+
+    * 부모 클래스 객체를 반환하는 내장함수
+
+  ```python
+  class Person:
+      def __init__(self, name, age, number, email):
+          self.name = name
+          self.age = age
+          self.number = number
+          self.email = email
+
+  # super()을 사용하지 않을 경우 - 부모 클래스의 모든 인자들을 입력해야 함
+  class Student(Person):
+      def __init__(self, name, age, number, email, student_id):
+          self.name = name
+          self.age = age
+          self.number = number
+          self.email = email
+          self.student_id = student_id
+
+  # super()을 사용할 경우
+  class Student(Person):
+      # Python 문법에 따라 위치 인자는 생략할 수 없어 모두 설정해줘야 함
+      def __init__(self, name, age, number, email, student_id):
+        # 부모 클래스의 생성자 함수를 끌어온다
+        super().__init__(name, age, number, email)
+        # Person().__init__(name, age, number, email)
+        # 상속 시 부모 클래스의 이름을 사용하지 않는 이유
+        # 1)부모 클래스의 이름이 바뀌는 경우, 2)다중상속 시 상속 순서 문제를 해결
+        self.student_id = student_id
+  ```
+
+## 9. 다중상속
+
+  * 둘 이상의 상위 클래스로부터 여러 행동이나 특징을 상속받을 수 있는 것
+
+  * 상속받은 모든 클래스의 요소를 활용 가능함
+
+  * 중복된 속성이나 메서드가 있는 경우 상속 순서에 의해 결정됨
+
+  ```python
+  class Person:
+    def __init__(self, name):
+        self.name = name
+
+    def greeting(self):
+        return f'안녕, {self.name}'
+
+
+  class Mom(Person):
+      gene = 'XX'
+
+      def swim(self):
+          return '엄마가 수영'
+
+
+  class Dad(Person):
+      gene = 'XY'
+
+      def walk(self):
+          return '아빠가 걷기'
+
+
+  class FirstChild(Dad, Mom):
+      def swim(self):
+          return '첫째가 수영'
+      
+      def cry(self):
+          return '첫째가 응애'
+      
+  baby1 = FirstChild('김싸피')
+  # 본인의 instance가 잘 동작하는지 확인
+  print(baby1.swim()) # 첫째가 수영
+  print(baby1.cry())  # 첫째가 응애
+
+  # 본인의 instance에 없는 함수 → 부모 클래스로 찾아올라감
+  print(baby1.walk()) # 아빠가 걷기
+
+  # 본인의 instance에 없는 함수 → 부모 클래스 양쪽 모두에 있다면
+  print(baby1.gene)   # XY
+
+  # 중복된 속성이나 메서드가 있는 경우 상속 순서에 의해 결정됨
+  # 이 경우, class FirstChild 설정 시 Dad가 먼저 상속 순서에 들어갔기 때문에 XY가 print out됨
+  ```
+
+  * 다이아몬드 문제 (The Diamond Problem)
+
+    * 두 클래스 B와 C가 A에서 상속되고, 클래스 D가 B와 C 모두에서 상속될 때 발생하는 모호함
+
+    * B와 C가 재정의한 메서드가 A에 있고 D가 이를 재정의하지 않은 경우라면, D는 B의 메서드 중 어떤 버전을 상속할 것인가? 아니면 C의 메서드 버전을 상속하는가?
+
+  * Python 에서의 다이아몬드 문제 해결책 - MRO (Method Resolution Order) 알고리즘
+
+    * 부모 클래스로부터 상속된 속성들의 검색을 깊이 우선으로, 왼쪽에서 오른쪽으로, 계층 구조에서 겹치는 같은 클래스를 두 번 검색하지 않음
+
+      * 그래서, 속성이 D에서 발견되지 않으면 B에서 찾고, B에서도 발견되지 않으면 C에서 찾는 식으로 진행
+
+    ```python
+    class ParentA:
+      def __init__(self):
+          self.value_a = 'ParentA'
+
+      def show_value(self):
+          print(f'Value from ParentA: {self.value_a}')
+
+
+    class ParentB:
+        def __init__(self):
+            self.value_b = 'ParentB'
+
+        def show_value(self):
+            print(f'Value from ParentB: {self.value_b}')
+
+
+    class Child(ParentA, ParentB):
+        def __init__(self):
+            super().__init__()  # MRO 알고리즘에 기반해 ParentA의 생성자 함수를 가져온다.
+            self.value_c = 'Child'
+
+        def show_value(self):
+            super().show_value()
+            print(f'Value from Child: {self.value_c}')
+
+
+    child = Child() # Value from ParentA: ParentA
+    child.show_value()  # Value from Child: Child
+    print(child.value_c)    # Child
+    print(child.value_a)    # ParentA
+
+    # class 변수가 아닌, ParentB의 생성자 함수를 이용해 만들어진 값
+    # ParentA의 생성자 함수를 사용하지 않았기 때문제 Error 발생
+    print(child.value_b)    # Error
+    ```
+
+    * super() : 다중 상속 시 MRO를 기반으로, 현재 클래스가 상속하는 모든 부모 클래스 중 다음에 호출될 메서드를 결정해 자동으로 호출
+
+      * 호출이 끝난 이후 반환은 역순으로 이루어짐 (콜스택, 재귀함수를 생각해보면 됨)
+
+      * super()의 사용 사례
+
+        1. 단일 상속 구조
+
+          * 명시적으로 이름을 지정하지 않고 부모 클래스를 참조할 수 있으므로, 코드를 더 유지 관리하기 쉽게 만들 수 있음
+
+          * 클래스 이름이 변경되거나 부모 클래스가 교체되어도, super()를 사용하면 코드 수정이 더 적게 필요
+
+        2. 다중 상속 구조
+
+          * MRO를 따른 메서드 호출
+
+          * 복잡한 다중 상속 구조에서 발생할 수 있는 문제 방지
+
+    * mro() 메서드
+
+      * 해당 인스턴스의 클래스가 어떤 부모 클래스를 가지는지 확인하는 메서드
+
+      * 기존의 인스턴스 → 클래스 순으로 이름 공간을 탐색하는 과정에서 상속 관계에 있으면 인스턴스 → 자식 클래스 → 부모 클래스로 확장
+
+    ```python
+    class A:
+        def __init__(self):
+            print('A Constructor')
+
+
+    class B(A):
+        def __init__(self):
+            super().__init__()
+            print('B Constructor')
+
+
+    class C(A):
+        def __init__(self):
+            super().__init__()
+            print('C Constructor')
+
+
+    class D(B, C):
+        def __init__(self):
+            super().__init__()
+            print('D Constructor')
+
+
+    obj = D() # A, C, B, D 순으로 반환(print out)
+    print()
+    print(D.mro())  # [D, B, C, A] 순으로 호출
+    ```
+
+  * MRO가 필요한 이유
+
+    * 부모 클래스들이 여러 번 액세스되지 않도록
+    
+      1. 각 클래스에서 지정된 왼쪽에서 오른쪽으로 가는 순서를 보존하고
+      
+      2. 각 부모를 오직 한 번만 호출하고
+      
+      3. 부모들의 우선순위에 영향을 주지 않으면서 서브 클래스를 만드는 단조적 구조 형성
+
+    * 프로그래밍 언어의 신뢰성있고 확장성있는 클래스를 설계할 수 있도록 도움
+
+    * 클래스 간 메서드 호출 순서가 예측 가능하게 유지되며, 코드의 재사용성과 유지보수성이 향상
+
+## 10. 에러와 예외
+
+  * 버그 (Bug), 디버깅 (Debugging)
+
+    * SW에서 발생하는 오류 또는 결함, 프로그램의 예상된 동작과 실제 동작 간 불일치
+
+    * SW에서 발생하는 버그를 찾아내고 수정하는 과정이 디버깅
+
+  * 에러 (Error)
+
+    * 프로그램 실행 중 발생하는 예외 상황
+
+    | Error Type | Explanation |
+    | :---: | :---: |
+    | 문법 에러<br>(Syntax Error) | 프로그램 구문이 올바르지 않은 경우 발생<br>(오타, 괄호 및 콜론 누락 등 문법적 오류) |
+    | 예외<br>(Exception) | 프로그램 실행 중 감지되는 에러 |
+    | |
+
+    * 문법 에러 예시
+
+    | Syntax Error Type | Explanation |
+    | :---: | :--- |
+    | Invalid Syntax | 문법 오류 |
+    | assign to literal | 잘못된 할당 |
+    | EOL | End of Line |
+    | EOF | End of File |
+    | |
+
+  * 예외 (Excention)
+
+    * 프로그램 실행 중 감지되는 에러
+
+    * [내장 예외 (Built-in Exceptions)](https://docs.python.org/ko/3/library/exceptions.html#built-in-exceptions)
+
+      * 예외 상황을 나타내는 예외 클래스들
+
+      * Python에서 이미 정의되어 있으며, 특정 예외 상황에 대한 처리를 위해 사용
+
+      | Exception Error Type | Explanation |
+      | :---: | :--- |
+      | ZeroDivisionError | 나누기 또는 모듈로 연산의 두 번째 인자가 0일 때 |
+      | TypeError | 타입 불일치, 인자 누락, 인자 초과, 인자 타입 불일치 등 |
+      | ValueError | 연산이나 함수에 문제는 없지만 부적절한 값을 가진 인자를 받았고,<br>상황이 IndexError처럼 더 구체적인 예외로 설명되지 않는 경우 |
+      | IndexError | Sequence 인덱스가 범위를 벗어날 때 |
+      | KeyError | dictionary에 해당 key가 존재하지 않는 경우 |
+      | ModuleNotFoundError | module을 찾을 수 없을 때 |
+      | ImportError | import하려는 이름을 찾을 수 없을 때 |
+      | KeyboardInterrupt | 사용자가 Control-C 또는 Delete를 누를 때 발생<br>무한루프 시 강제 종료 |
+      | IndentationError | 잘못된 들여쓰기와 관련된 문법 오류 |
+      | |
+
+  * 예외 처리 - try & except
+
+    * Python 에서는 try문과 except 절을 사용해 예외 처리
+
+      * try 블록 안에는 예외가 발생할 수 있는 코드를 작성
+
+      * except 블록 안에는 예외가 발생했을 때 처리할 코드를 작성
+
+      * 예외 발생 시 프로그램 흐름은 try 블록을 빠져나와 해당 예외에 대응하는 except 블록으로 이동
+
+      ```python
+      try:
+          # 예외가 발생할 수 있는 코드
+
+      except 예외:
+          # 예외 처리 코드
+      ```
+
+    * 복수 예외 처리
+
+    ```python
+    # 100을 사용자가 입력한 값으로 나누고 출력하는 코드
+    # 발생할 수 있을 Error 예상하기 - 숫자가 아님, 0으로 나눔
+
+    try:
+        num = int(input('100을 나눌 숫자를 입력하시오: '))
+        print(100 / num)
+        
+    except ValueError:
+        print('숫자가 아닙니다.')
+
+    except ZeroDivisionError:
+        print('0으로 나눌 수 없습니다.')
+
+    # 경우에 따라 묶어서 표현할 수도 있음
+    # except (ValueError, ZeroDivisionError):
+    # print('')
+
+    except:
+        print('알 수 없는 Error')
+    ```
+
+    ```python
+    # 내장 예외 클래스는 상속 계층구조를 가지기 때문에
+    # except 절로 분기 시 반드시 하위 클래스를 먼저 확인할 수 있도록 작성해야 함
+    try:
+        num = int(input('100을 나눌 숫자를 입력하시오:'))
+        print(100 / num)
+
+    except BaseException:
+        print('')
+
+    # BaseException이 ZeroDivision보다 상위 클래스이기 때문에 아래 코드에서 문제가 발생함
+    except ZeroDivision:
+        print('')
+    ```
+
+  * as 키워드
+
+    * 에러 메시지를 except 블록에서 사용할 수 있음
+
+    ```python
+    my_list = []
+
+    try:
+        number = my_list[1]
+
+    except IndexError as error:
+        print(f'{error}가 발생했습니다.')
+    ```
+
+
+
+## 11. 참고 문서
+
+  * 매직 메서드 (스페셜 메서드) (01/24)
 
     * 굳이 따지면, 인스턴스 메서드에 속함
 
@@ -519,7 +922,7 @@ print(MyClass.static_method())  # static method
     print(c2) # [원] radius: 1
     ```
 
-  * 데코레이터 (decorator)
+  * 데코레이터 (decorator) (01/24)
 
     * 다른 함수의 코드를 유지한 채로 수정하거나 확장하기 위해 사용되는 함수
 
@@ -549,3 +952,47 @@ print(MyClass.static_method())  # static method
     함수 실행 후
     """
     ```
+
+  * EAFP & LBYL - 예외처리와 값 검사에 대한 2가지 접근방식
+
+    * EAFP (Easier to Ask for Forgiveness than Permission)
+
+      * 일단 실행 후, 예외처리를 중심으로 코드를 작성하는 접근 방식 (try - except)
+
+    * LBYL (Look Before You Leap)
+
+      * 실행 전 값 검사를 중심으로 코드를 작성하는 접근 방식 (if - else)
+
+    ```python
+    # dict에서 key를 조회할 때 key가 없다는 상황을 가정
+    my_dict = {}
+
+    # EAFP (try - except)
+    try:
+        result = my_dict['a']
+        print(result)
+    except KeyError:
+        print('Key가 존재하지 않습니다.')
+
+    # LBYL (if - else)
+    # 문제 해결에 적합한 구조이기 때문에 좀 더 익숙할 것
+    if 'a' in my_dict:
+        result = my_dict['a']
+        print(result)
+    else:
+        print('Key가 존재하지 않습니다.')
+    ```
+
+  * 접근 방식 비교
+
+    | EAFP | LBYL |
+    | :---: | :---: |
+    | '일단 실행하고 예외 처리' | '실행 전 조건을 검사' |
+    | 코드를 실행하고 예외가 발생하면 예외 처리 수행 | 코드 실행 전 조건문 등을 사용해 예외 상황을 미리 검사하고, 예외 상황을 피하는 방식 |
+    | 코드에서 예외가 발생할 수 있는 부분을 미리 예측해 대비하는 것이 아니라, 예외가 발생한 후에 예외를 처리 | 코드가 좀 더 예측 가능한 동작을 하지만, 코드가 더 길고 복잡해질 수 있음 |
+    | 예외 상황을 예측하기 어려운 경우 유용 | 예외 상황을 미리 방지하고 싶을 때 유용 |
+    | |
+
+
+
+  [파이썬 자습서 ~ 9.5까지의 내용](https://docs.python.org/ko/3/tutorial/index.html)
