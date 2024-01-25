@@ -182,7 +182,7 @@
       print(new_text4)  # HEllO, WOrLD!
 
       # method 이어서 사용하기
-      new_text = text.swapcase().reloace('l', 'z')
+      new_text = text.swapcase().replace('l', 'z')
       print(new_text) # HEzzO, WOrLD!
       ```  
 
@@ -193,7 +193,7 @@
     | L.append(x) | 리스트 마지막에 항목 x를 추가 |
     | L.extend(m) | Iterable m의 모든 항목들을 리스트 끝에 추가 (+=과 같은 기능) |
     | L.insert(i, x) | 리스트 인덱스 i에 항목 x를 삽입 	|
-    | L.remove(x) | 리스트 가장 왼쪽에 있는 항목(첫 번째) x를 제거 항목이 존재하지 않을 경우, ValueError |
+    | L.remove(x) | 리스트 가장 왼쪽에 있는 항목(첫 번째) x를 제거<br>항목이 존재하지 않을 경우, ValueError |
     | L.pop() | 리스트 가장 오른쪽에 있는 항목(마지막)을 반환 후 제거 |
     | L.pop(i) | 리스트의 인덱스 i에 있는 항목을 반환 후 제거 |
     | L.clear() | 리스트의 모든 항목 삭제	|
