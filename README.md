@@ -10,6 +10,7 @@
 
 ## Study
   * [2차원 배열 선언하기 - Shallow Copy Problem](directory/study/001.md)
+  * [# 2개 이상 조건으로 정렬하기](directory/study/002.md)
 
 ## etc.
   * [SSAFY 11기 스타트캠프](directory/startcamp/startcamp.md)
