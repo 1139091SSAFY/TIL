@@ -8,6 +8,8 @@
   * [Data Structure](directory/lec-python/lec-python-data_structure.md)
   * [OOP : Object Oriented Programming](directory/lec-python/lec-python-oop.md)
 
+## Algorithms
+
 ## Study
   * [2차원 배열 선언하기 - Shallow Copy Problem](directory/study/001.md)
   * [2개 이상 조건으로 정렬하기](directory/study/002.md)
