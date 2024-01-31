@@ -1,6 +1,5 @@
 # Today I Learned
 
-
 ## Python
   * [Fundamentals of Python](directory/lec-python/lec-python.md)
   * [Functions](directory/lec-python/lec-python-func.md)
