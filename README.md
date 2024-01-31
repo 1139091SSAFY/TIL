@@ -8,7 +8,7 @@
   * [Data Structure](directory/lec-python/lec-python-data_structure.md)
   * [OOP : Object Oriented Programming](directory/lec-python/lec-python-oop.md)
 
-## Algorithms
+## APS : Algorithm Problem Solving
   * [Arrays](directory/lec-algorithm/1-array.md)
 
 ## Study
