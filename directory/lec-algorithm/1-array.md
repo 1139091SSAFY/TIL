@@ -1,6 +1,6 @@
 # Algorithm
 
-<div style="text-align: right"> 24. 01. 29. ~ </div>
+<div style="text-align: right"> 24. 01. 29. ~ 24. 02. 01. </div>
 
 ## 1. 배열 1(Array 1)
 
@@ -351,6 +351,188 @@ for i1 in range(1, 4):
     print()
     ```
 
+### 6. 검색 (Search)
+
+* 저장되어 있는 자료 중 원하는 항목을 찾는 작업
+
+* 목적하는 탐색 키를 가진 항목을 찾는 것
+
+    * 탐색 키(search key) : 자료를 구별하여 인식할 수 있는 키
+
+* 검색의 종류
+
+    * 순차 검색 (sequential search)
+
+      * 일렬로 되어 있는 자료를 순서대로 검색하는 방법
+
+        * 가장 간단, 직관적, 배열이나 연결 리스트 등 순차구조로 구현된 자료구조에서 원하는 항목을 찾을 때 유용
+
+        * 알고리즘이 단순해 구현이 쉽지만, 검색 대상의 수가 많은 경우에는 수행시간이 급격히 증가
+
+      1. 순차 검색 - 정렬되어 있지 않은 경우
+
+        * 첫 번째 원소부터 순서대로 검색 대상과 키 값이 같은 원소가 있는지 비교하며 찾는다.
+
+        * 키 값이 동일한 원소를 찾으면 그 원소의 인덱스를 반환
+
+        * 자료구조의 마지막에 이를 때까지 검색 대상을 찾지 못하면 검색 실패 반환
+
+        * 찾고자 하는 원소 순서에 따라 비교 횟수 결정
+
+          * 정렬되지 않은 자료에서의 순차 검색의 평균 비교 회수
+
+          $$(1 / n) * (1 + 2 + 3 + ... + n) = (n + 1) / 2$$
+
+          * 시간 복잡도 $$O(n)$$
+
+        ```python
+        def sequential_search(a, n, key):  # a : 검색 대상 배열, n : len(a), key : 찾고자 하는 값
+            i = 0
+            while i < n and a[i] != key:
+                i += 1
+
+            if i >= n:
+                return -1
+            else:
+                return i
+        ```
+
+      2. 정렬되어 있는 경우
+
+        * 검색 과정
+
+          * 자료가 오름차순으로 정렬된 상태에서 검색을 실시한다고 가정
+
+          * 자료를 순차적으로 검색하며 키 값을 비교해, 원소의 키 값이 검색 대상의 키 값보다 크면 찾는 원소가 없다는 것이므로, 더 이상 검색하지 않고 검색을 종료
+
+        * 찾고자 하는 원소 순서에 따라 비교 횟수 결정
+
+          * 정렬이 되어 있으므로, 검색 실패를 반환하는 경우 평균 비교 회수가 반으로 줄어든다.
+
+          * 시간 복잡도 $$O(n)$$
+
+        ```python
+        def sequential_search2(a, n, key):  # a : 검색 대상 배열, n : len(a), key : 찾고자 하는 값
+            i = 0
+            while i < n and a[i] < key:
+                i += 1
+
+            if i >= n:
+                return -1
+            else:
+                return i
+        ```
+
+    * 이진 검색 (binary search)
+
+      * 자료의 가운데에 있는 항목의 키 값과 비교해 다음 검색의 위치를 결정하고 검색을 계속 진행하는 방법
+
+        * 목적 키를 찾을 때까지 이진 검색을 순환적으로 반복 수행함으로써 검색 범위를 반으로 줄여가면서 보다 빠르게 검색 수행
+
+      * 자료가 정렬된 상태여야 한다.
+
+      * 검색 과정
+
+        * 자료의 중앙에 있는 원소를 골라, 찾고자 하는 목표 값과 비교한다.
+
+        * 목표 값이 중앙 원소 값보다 작으면 자료의 왼쪽 반에 대해 새로 검색을 수행하고, 크다면 자료의 오른쪽 반에 대해 새로 검색을 수행한다.
+
+      * 구현
+
+        * 검색 범위의 시작 / 종료점을 이용해 검색을 반복 수행
+
+        * 이진 검색의 경우, 자료에 삽입이나 삭제가 발생했을 때 배열의 상태를 항상 정렬 상태로 유지하는 추가 작업이 필요함
+
+      ```python
+      def binarySearch(a, n, key):  # a : 검색 대상 배열, n : len(a), key : 찾고자 하는 값
+          start = 0
+          end = n - 1
+
+          while start <= end:
+              middle = (start + end) // 2
+              if a[middle] == key:    # 검색 성공 시
+                  return middle
+              elif a[middle] > key:   # key보다 검색값이 클 경우, 검색값보다 더 작은 좌측 탐색
+                  end = middle - 1
+              else:   # key보다 검색값이 클 경우, 검색값보다 더 큰 우측 탐색
+                  start = middle + 1
+          return -1   # 검색 실패 시
+
+      def binarySearch2(a, start, end, key):  # a : 검색 대상 배열, start, end : 0, len(a) - 1, key : 찾고자 하는 값
+          if start > end: # 검색 실패 시 - 재귀함수 break 조건 선행
+              return -1
+          else:
+              middle = (start + end) // 2
+              if a[middle] == key:  # 검색 성공 시
+                  return middle
+              elif a[middle] > key: # key보다 검색값이 클 경우, 검색값보다 더 적은 좌측 탐색
+                  return binarySearch2(a, start, middle - 1, key)
+              else: # key보다 검색값이 작을 경우, 검색값보다 더 큰 우측 탐색
+                  return binarySearch2(a, middle + 1, end, key)
+      ```
+
+### 7. 선택 정렬 (Selection Sort)
+
+* Index
+
+    * Database에서, Table에 대한 동작 속도를 높여주는 자료 구조
+
+    * Index의 디스크 저장 공간 크기는 Table보다 작다.
+      
+      * 보통 Index는 key - field만 갖고 있고, Table의 다른 세부 항목들은 갖고 있지 않기 때문
+
+* 배열을 사용한 인덱스
+
+    * 대량의 데이터를 매번 정렬하면 프로그램의 반응은 느려질 수밖에 없다.
+
+    * 이러한 대량 데이터의 성능 저하 문제를 해결하기 위해 배열 인덱스를 사용할 수 있다.
+
+* 주어진 자료들 중 가장 작은 값의 원소부터 차례대로 선택해 위치를 교환하는 방식의 정렬
+
+* 정렬 과정
+
+    * 주어진 리스트 중 최소값을 찾아, 그 값을 리스트의 맨 앞에 위치한 값과 교환
+
+    * 맨 처음 위치를 제외한 나머지 리스트를 대상으로 과정을 반복
+
+    * 시간 복잡도 $$O(n^2)$$
+
+    ```python
+    def SelectionSort(a, n):
+        for i in range(n - 1):
+            min_idx = i
+            for j in range(i + 1, n):
+                if a[min_idx] > a[j]:
+                    min_idx = j
+            a[i], a[min_idx] = a[min_idx], a[i]
+    ```
+
+* 셀렉션 알고리즘 (Selection Algorithm)
+
+    * 저장되어 있는 자료로부터 k번째로 큰 혹은 작은 원소, 혹은 최대 / 최소 / 중간값을 찾는 방법
+
+    * 시간 복잡도 $$O(kn)$$
+
+      * k가 비교적 작을 때 유용
+
+    * 선택 과정
+
+      1. 정렬 알고리즘을 이용해 자료 정렬
+
+      2. 원하는 순서에 있는 원소 가져오기
+
+    ```python
+    # 일반적인 셀렉션 알고리즘
+    def select(a, k):   # k : 1 ~ n
+        n = len(a)
+        for i in range(n - 1):
+            min_idx = i
+            for j in range(i, n):
+                if a[min_idx] > a[j]:
+                    min_idx = j
+            a[i], a[min_idx] = a[min_idx], a[i]
+        return a[k - 1]
+    ```
 
 ### 0. 참고
 
