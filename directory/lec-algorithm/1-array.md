@@ -2,7 +2,7 @@
 
 <div style="text-align: right"> 24. 01. 29. ~ 24. 02. 01. </div>
 
-## 1. 배열 1(Array 1)
+## 1. 배열 (Array)
 
 ### 1. 과정 소개(참고)
 
