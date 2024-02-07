@@ -86,30 +86,30 @@
 
         * 스택의 pop 알고리즘
 
-        ```python
-        def pop():
-            if len(s) == 0:
-                # underflow
-                return
-            else:
-                return s.pop()
-        ```
+          ```python
+          def pop():
+              if len(s) == 0:
+                  # underflow
+                  return
+              else:
+                  return s.pop()
+          ```
 
-        ```python
-        def pop():
-            global top
-            if top == -1:
-                print('underflow')
-                return 0
-            else:
-                top -= 1
-                return stack[top + 1]
+          ```python
+          def pop():
+              global top
+              if top == -1:
+                  print('underflow')
+                  return 0
+              else:
+                  top -= 1
+                  return stack[top + 1]
 
-        print(pop())
-        if top > -1:  # pop()
-            top -= 1
-            print(stack[top + 1])
-        ```
+          print(pop())
+          if top > -1:  # pop()
+              top -= 1
+              print(stack[top + 1])
+          ```
 
 ### 2. Stack의 응용 1
 
