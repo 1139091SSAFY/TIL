@@ -238,39 +238,39 @@
 
       1. 문제를 부분 문제로 분할한다.
 
-        ```python
-        # fibo(n) = fibo(n - 1) + fibo(n - 2)
-        # fibo(n - 1) = fibo(n - 2) + fibo(n - 3)
-        # ...
-        # fibo(2) = fibo(1) + fibo(0)
-        # 따라서, fibo(n)은 fibo(n - 1), fibo(n - 2), ..., fibo(2), fibo(1), fibo(0)의 부분집합으로 나뉨
-        ```
+          ```python
+          # fibo(n) = fibo(n - 1) + fibo(n - 2)
+          # fibo(n - 1) = fibo(n - 2) + fibo(n - 3)
+          # ...
+          # fibo(2) = fibo(1) + fibo(0)
+          # 따라서, fibo(n)은 fibo(n - 1), fibo(n - 2), ..., fibo(2), fibo(1), fibo(0)의 부분집합으로 나뉨
+          ```
 
       2. 부분 문제로 나누는 일이 끝나면 가장 작은 부분 문제부터 해를 구한다.
 
       3. 그 결과는 table에 저장하고, table에 저장된 부분 문제의 해를 이용해 상위 문제의 해를 구한다.
 
-        | table index | fibo(index) |
-        | :---: | :---: |
-        | [0] | 0 |
-        | [1] | 1 |
-        | [2] | 1 |
-        | [3] | 2 |
-        | [4] | 3 |
-        | ... | ... |
-        | [n] | fibo(n) |
-        | |
+          | table index | fibo(index) |
+          | :---: | :---: |
+          | [0] | 0 |
+          | [1] | 1 |
+          | [2] | 1 |
+          | [3] | 2 |
+          | [4] | 3 |
+          | ... | ... |
+          | [n] | fibo(n) |
+          | |
 
-        ```python
-        # Fibonacci Numbers의 DP 적용 알고리즘
-        def fibo2(n):
-            f = [0] * (n + 1)
-            f[0] = 0
-            f[1] = 1
-            for i in range(2, n + 1):
-                f[i] = f[i - 1] + f[i - 2]
-            return f[n]
-        ```
+          ```python
+          # Fibonacci Numbers의 DP 적용 알고리즘
+          def fibo2(n):
+              f = [0] * (n + 1)
+              f[0] = 0
+              f[1] = 1
+              for i in range(2, n + 1):
+                  f[i] = f[i - 1] + f[i - 2]
+              return f[n]
+          ```
 
   * DP의 구현 방식
 
@@ -348,19 +348,33 @@
       ```
 
       ![DFS 예 - 초기상태](image/13.PNG)
+
       ![DFS 예 - 1](image/14.PNG)
+
       ![DFS 예 - 2](image/15.PNG)
+
       ![DFS 예 - 3](image/16.PNG)
+
       ![DFS 예 - 4](image/17.PNG)
+
       ![DFS 예 - 5](image/18.PNG)
+
       ![DFS 예 - 6](image/19.PNG)
+
       ![DFS 예 - 7](image/20.PNG)
+      
       ![DFS 예 - 8](image/21.PNG)
+
       ![DFS 예 - 9](image/22.PNG)
+
       ![DFS 예 - 10](image/23.PNG)
+
       ![DFS 예 - 11](image/24.PNG)
+
       ![DFS 예 - 12](image/25.PNG)
+      
       ![DFS 예 - 13](image/26.PNG)
+
       ![DFS 예 - 14](image/27.PNG)
 
       * 그래프 탐색 시 유향 / 무향에 따라 인접의 정의가 달라짐
