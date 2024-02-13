@@ -389,6 +389,244 @@
 
         * 각 정점들의 인접 정점들을 저장
 
+### 8. 계산기
+
+* 문자열로 된 계산식이 주어질 때, 스택을 이용해 이 계산식의 값을 계산 가능
+
+* 문자열 수식 계산의 일반적 방법
+
+    1. 중위 표기법의 수식을 후위 표기법으로 변경
+
+    ```{:.pseudocode}
+    # 중위표기법 (infix notation)
+        → 연산자를 피연산자의 가운데 표기하는 방법 (A + B)
+
+    # 후위표기법 (postfix notation)
+        → 연산자를 피연산자 뒤에 표기하는 방법 (AB+)
+    ```
+    
+
+    * 중위 표기법 → 후위 표기법 변환 방법 1
+    
+      1. 수식의 각 연산자에 대해 우선순위에 따라 괄호를 사용해 다시 표현
+
+      2. 각 연산자를 그에 대응하는 오른쪽 괄호 뒤로 이동
+
+      3. 괄호 제거
+
+    ```{:.pseudocode}
+    # 예) A * B - C / D
+        
+        1. ( (A * B) - (C / D) )
+
+        2. ( (A B)* - (C D)/ )-
+        
+        3. AB* CD/ -
+    ```
+
+    * 중위 표기법 → 후위 표기법 변환 방법 2 → 스택 이용
+    
+      1. 입력받은 중위 표기식에서 토큰을 읽는다
+
+      2. 토큰이 피연산자이면 토큰 출력
+
+      3. 토큰이 연산자(괄호 포함)일 때, 이 토큰이 스택의 top에 저장되어 있는 연산자보다 우선순위가 높으면 스택에 push, 그렇지 않으면 스택 top의 연산자의 우선순위가 토큰의 우선순위보다 작을 때까지 스택에서 pop한 후 토큰의 연산자를 push함. 만약 top에 연산자가 없으면 push한다.
+
+      4. 토큰이 오른쪽 괄호 ')'이면 스택 top에 왼쪽 괄호 '('가 올 때까지 스택에 pop 연산을 수행하고 pop한 연산자 출력. 왼쪽 괄호를 만나면 pop만 하고 출력하지 않는다.
+
+      5. 중위 표기식에 더 읽을 것이 없다면 중지하고, 더 읽을 것이 있다면 1부터 다시 반복
+
+      6. 스택에 남아있는 연산자를 모두 pop하여 출력
+
+        * 스택 밖의 왼쪽 괄호는 우선 순위가 가장 높으며, 스택 안의 왼쪽 괄호는 우선 순위가 가장 낮다.
+
+      ```{:.pseudocode}
+      icp(in-coming priority)
+      isp(in-stack priority)
+
+      if (icp > isp)  push()
+      else  pop()
+      ```
+      | token | isp | icp |
+      | :---: | :---: | :---: |
+      | ) | - | - |
+      | *, / | 2 | 2 |
+      | +, - | 1 | 1 |
+      | ( | 0 | 3 |
+      | |
+
+    2. 후위 표기법의 수식을 스택을 이용해 계산
+
+        1. 피연산자를 만나면 스택에 push한다.
+
+        2. 연산자를 만나면 필요한 만큼의 피연산자를 스택에서 pop하여 연산하고, 연산결과를 다시 스택에 push
+
+        3. 수식이 끝나면, 마지막으로 스택을 pop하여 출력
+
+### 9. 백트래킹 (Backtracking)
+
+* 해를 찾는 도중 막히면(즉, 해가 아니면) 되돌아가서 다시 해를 찾아가는 기법
+
+* 백트래킹 기법은 최적화(optimization) 문제와 결정(decision) 문제를 해결할 수 있다.
+
+* 결정 문제 : 문제의 조건을 만족하는 해가 존재하는지의 여부를 'yes' 또는 'no'로 답하는 문제
+
+    * 미로 찾기
+
+    * n-Queen 문제
+
+    * Map coloring
+
+    * 부분 집합의 합(Subset Sum) 문제 등
+
+* 미로 찾기
+
+    * 입구와 출구가 주어진 미로에서, 입구부터 출구까지의 경로를 찾는 문제
+
+    * 이동 방향은 4방향으로 제한함
+
+      ![Maze 예시](image/28.PNG)
+
+      ![Maze 예시](image/29.PNG)
+
+      ![Maze 예시](image/30.PNG)
+
+      ![Maze 예시](image/31.PNG)
+      
+* 백트래킹과 깊이우선탐색의 차이
+
+    * 어떤 노드에서 출발하는 경로가 해결책으로 이어질 것 같지 않으면 더 이상 그 경로를 따라가지 않음으로써 시도 횟수를 줄임 (Prunning 가지치기)
+
+    * 깊이우선탐색이 모든 경로를 추적하는데 비해 백트래킹은 불필요한 경로를 조기에 차단
+
+    * 깊이우선탐색을 가하기에 경우의 수가 너무나 많음 → n! 가지의 경우의 수를 가진 문제에 대해 깊이우선탐색을 가하면 처리 불가능한 문제
+
+    * 백트래킹 알고리즘을 적용하면 일반적으로 경우의 수가 줄어들지만 이 역시 최악의 경우 여전히 지수함수 시간(Exponential Time)을 요하므로 처리 불가능
+
+* 백트래킹 기법
+
+    * 어떤 노드의 유망성을 점검한 후 유망(promising)하지 않다고 결정되면 그 노드의 부모로 되돌아가(backtracking) 다음 자식 노드로 감.
+
+    * 어떤 노드를 방문 시 그 노드를 포함한 경로가 해답이 될 수 없으면 그 노드는 유망하지 않다고 하며, 반대로 해답의 가능성이 있으면 유망하다고 한다.
+
+    * 가지치기(prunning) : 유망하지 않는 노드가 포함되는 경로는 더 이상 고려하지 않는다. → 모든 후보(경우)를 고려하지 않음!
+
+* 백트래킹 알고리즘 절차
+
+    * 상태 공간 트리의 깊이 우선 검색 실시
+
+    * 각 노드가 유망한지 점검
+
+    * 만일 그 노드가 유망하지 않으면, 그 노드의 부모 노드로 돌아가 검색을 계속
+
+* 일반 백트래킹 알고리즘
+
+    ```{:.pseudocode}
+    def checknode(v):  # node
+        if promising(v):
+            if there is a solution at v:
+                write the solution
+            else:
+                for u in each child of v:
+                    checknode(u)
+    ```
+
+    ![backtracking_chess](image/32.PNG)
+
+    ![상태 공간 트리](image/33.PNG)
+
+      * 순수한 dfs - 155 nodes
+
+      * backtracking - 27 nodes
+
+### 10. 부분집합 (Powerset) / 순열 (Permutation)
+
+* 백트래킹 기법으로 powerset 생성
+
+    ```python
+    # 각 원소가 부분집합에 포함되었는지를 loop를 이용해 확인하고 부분집합을 생성하는 방법
+    bit = [0, 0, 0, 0]
+    for i in range(2):
+        bit[0] = i  # 0번째 원소
+        for j in range(2):
+            bit[1] = j  # 1번째 원소
+            for k in range(2):
+                bit[2] = k  # 2번째 원소
+                for l in range(2):
+                    bit[3] = l  # 3번째 원소
+                    print(bit)  # 생성된 부분집합 출력
+    ```
+
+    ```python
+    # powerset을 구하는 backtracking 알고리즘
+    def backtrack(a, k, input):
+        global MAXCANDIDATES
+        c = [0] * MAXCANDIDATES
+
+        if k == input:
+            process_solution(a, k)  # 답이면 원하는 작업을 한다.
+        else:
+            k += 1
+            ncandidates = construct_candidates(a, k, input, c)
+            for i in range(ncandidates):
+                a[k] = c[i]
+                backtrack(a, k, input)
+
+    def construct_candidates(a, k, input, c):
+        c[0] = True
+        c[1] = False
+        return 2
+
+    MAXCANDIDATES = 2
+    NMAX = 4
+    a = [0] * NMAX
+    backtrack(a, 0, 3)
+    ```
+
+* 백트래킹 기법으로 순열 생성
+
+    ```python
+    # {1, 2, 3}을 포함하는 모든 순열을 생성하는 함수 - 동일한 숫자가 포함되지 않았을 때
+    for i1 in range(1, 4):
+        for i2 in range(1, 4):
+            if i2 != i1:
+                for i3 in range(1, 4):
+                    if i3 != i1 and i3 != i2:
+                        print(i1, i2, i3)
+    ```
+
+    ```python
+    # backtracking을 이용해 순열 구하기
+    def backtrack(a, k, input):
+        global MAXCANDIDATES
+        c = [0] * MAXCANDIDATES
+
+        if k == input:
+            for i in range(1, k + 1):
+                print(a[i], end = ' ')
+            print()
+
+        else:
+            k += 1
+            ncandidates = construct_candidates(a, k, input, c)
+            for i in range(ncandidates):
+                a[k] = c[i]
+                backtrack(a, k, input)
+
+    def construct_candidates(a, k, input, c):
+        in_perm = [False] * NMAX
+        
+        for i in range(1, k):
+            in_perm[a[i]] = True
+
+        ncandidates = 0
+        for i in range(1, input + 1):
+            if in_perm[i] == False:
+                c[ncandidates] = i
+                ncandidates += 1
+        return ncandidates
+    ```
+
 ### 0. 참고
 
   * '자료구조' 는 의미상 '데이터 저장소' 의 의미에 더 가까운 경우가 종종 있다.
