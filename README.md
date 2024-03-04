@@ -7,8 +7,16 @@
   * [Data Structure](directory/lec-python/lec-python-data_structure.md)
   * [OOP : Object Oriented Programming](directory/lec-python/lec-python-oop.md)
 
-## APS : Algorithm Problem Solving
+## Algorithm
   * [Arrays](directory/lec-algorithm/1-array.md)
+  * [String](directory/lec-algorithm/2-string.md)
+  * [Stack](directory/lec-algorithm/3-stack.md)
+  * [Queue](directory/lec-algorithm/4-queue.md)
+  * [Tree](directory/lec-algorithm/5-tree.md)
+
+## APS : Algorithm Problem Solving
+  * [APS-1](directory/lec-aps/1-aps.md)
+  * [APS-2](directory/lec-aps/2-string.md)
 
 ## Study
   * [2차원 배열 선언하기 - Shallow Copy Problem](directory/study/001.md)
