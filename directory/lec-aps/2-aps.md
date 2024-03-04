@@ -120,6 +120,51 @@
 
 ### 4. 조합
 
+* 서로 다른 n개의 원소 중 r개를 순서 없이 골라낸 것
+
+* {A, B, C, D, E} 5명 중 3명을 뽑을 수 있는 모든 경우의 수
+
+    ```python
+    '''
+    3중 for문으로 구현 가능
+    '''
+
+    arr = ['A', 'B', 'C', 'D', 'E']
+
+    for a in range(5):
+        start1 = a + 1
+        for b in range(start1, 5):
+            start2 = b + 1
+            for c in range(start2, 5):
+                print(arr[a], arr[b], arr[c])
+    ```
+
+* 5명 중 n명을 뽑는 코드
+
+    * n중 for문으로 구현 → 재귀호출 구현이 필요
+
+        * branch : 최대 5개
+
+        * level : n
+
+    ```python
+    arr = ['A', 'B', 'C', 'D', 'E']
+    path = []
+
+    n = 3
+    def run(lev, start):
+        if lev == n:
+            print(path)
+            return
+
+        for i in range(start, 5):
+            path.append(arr[i])
+            run(lev + 1, i + 1)
+            path.pop()
+
+    run(0, 0)   # level : 0, start : 0
+    ```
+
 ### 5. 탐욕 알고리즘
 
 * 결정이 필요할 때, 현재 기준으로 가장 좋아보이는 선택지를 결정해 답을 도출하는 알고리즘

@@ -118,6 +118,24 @@
         * $f(n)$은 *$n$이 증가함에 따라 $n^2$와 동일한 증가율을 가진다*라는 의미
 
 ### 3. 표준 입출력 방법 - sys module (파일 입출력)
+
+* 콘솔 입력 대신, 파일 입력으로 입력을 받기
+
+    ```python
+    '''
+    문자열을 입력받고,
+    문자열을 출력하는 힌트 소스코드
+    '''
+
+    import sys
+    sys.stdin = open('input.txt', 'r')
+    sys.stdout = open('output.txt', 'w')
+
+    text = input()
+    print(text)
+    ```
+
+
 ### 4. 진수
 
 * 2진수, 8진수, 10진수, 16진수
