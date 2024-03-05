@@ -17,6 +17,7 @@
 ## APS : Algorithm Problem Solving
   * [APS-1](directory/lec-aps/1-aps.md)
   * [APS-2](directory/lec-aps/2-string.md)
+  * [CT : Computational Thinking](directory/lec-aps/3-ct.md)
 
 ## Study
   * [2차원 배열 선언하기 - Shallow Copy Problem](directory/study/001.md)
