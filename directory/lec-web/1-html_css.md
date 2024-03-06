@@ -85,7 +85,7 @@
 
         * 하나의 요소는 여는 태그와 닫는 태그, 그리고 그 안의 내용으로 구성됨
 
-        * 닫는 태그는 태그 이름 앞에 슬래시가 포함되며, 닫는 태그가 없는 태그도 존재
+        * 닫는 태그는 태그 이름 앞에 슬래시(/)가 포함되며, 닫는 태그가 없는 태그도 존재
 
     * HTML 속성 (Attributes)
 
@@ -167,7 +167,7 @@
 
     * CSS Selector에 가중치를 계산해 어떤 스타일을 적용할지 결정
 
-        * 동일한 요소를 가리키는 2개 이상의 CSS 규칙이 있는 경우, 가장 높은 명시도를 ㅈ가진 Selector가 승리하여 스타일이 적용
+        * 동일한 요소를 가리키는 2개 이상의 CSS 규칙이 있는 경우, 가장 높은 명시도를 가진 Selector가 승리하여 스타일이 적용
 
     * Cascade 계단식
 
@@ -205,8 +205,8 @@
     ```
 
     ```CSS
-    <!-- 동일한 h1 태그에 다음과 같이 스타일이 작성된다면, h1 태그 내용의 색은 purple이 적용됨 -->
-    <!-- 가중치가 h1이 더 높기 때문 -->
+    <!-- 동일한 h1 태그에 다음과 같이 스타일이 작성된다면, h1 태그 내용의 색은 red가 적용됨 -->
+    <!-- 가중치가 요소 선택자(tag selector)인 h1보다 클래스 선택자(class selector)인 .make-red가 더 높기 때문 -->
     .make-red {
       color: red;
     }
@@ -229,7 +229,7 @@
     | | |
     | :---: | :---: |
     | 상속되는 속성 | Text 관련 요소<br>(font, color, text-align), opacity, visibility 등 |
-    | 상속되지 않는 속성 | Box model 관련 요소(width, height, borer, box-sizing, ...)<br>position 관련 요소(position, top/right/bottom/left, z-index) 등 |
+    | 상속되지 않는 속성 | Box model 관련 요소(width, height, border, box-sizing, ...)<br>position 관련 요소(position, top/right/bottom/left, z-index) 등 |
     | |
 
 * CSS 상속 여부는 MDN 문서에서 확인하기
