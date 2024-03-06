@@ -1,6 +1,6 @@
 # Algorithm
 
-<div style="text-align: right"> 24. 02. 20. ~   </div>
+<div style="text-align: right"> 24. 02. 20. ~ 24. 02. 21. </div>
 
 ## 1. Tree
 
