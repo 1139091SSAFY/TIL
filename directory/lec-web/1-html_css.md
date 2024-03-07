@@ -1,6 +1,6 @@
 # Web - HTML & CSS
 
-<div style="text-align: right"> 24. 03. 06. ~   </div>
+<div style="text-align: right"> 24. 03. 06. ~ 24. 03. 06. </div>
 
 ## 1. Web
 
