@@ -116,7 +116,7 @@
         * border-width, border-style, border-color를 한번에 설정하기 위한 속성
 
             ```CSS
-            <!-- 작성 순서는 영향을 주지 않음 -->
+            /* 작성 순서는 영향을 주지 않음 */
 
             border = 2px solid black
             ```
