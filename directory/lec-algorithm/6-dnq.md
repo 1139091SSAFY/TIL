@@ -1,6 +1,6 @@
 # Algorithm
 
-<div style="text-align: right"> 24. 03. 18. ~ </div>
+<div style="text-align: right"> 24. 03. 18. ~ 24. 03. 19. </div>
 
 ## 1. 분할 정복
 
@@ -262,3 +262,11 @@
     * 정렬된 배열에서 특정 값 이상 또는 이하가 처음으로 나타나는 위치를 찾는 알고리즘
 
     * 특정 데이터의 범위 검색 등에서 활용
+
+## 4. Backtracking 응용
+
+* Backtracking
+
+    * 완전탐색 + 가지치기
+
+    * 가능성이 없는(볼 필요 없는) 경우의 수를 제거하는 기법
