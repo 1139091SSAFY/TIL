@@ -364,3 +364,360 @@
     * Path Compression
 
         * Find-Set을 행하는 과정에서 만나는 모든 노드들이 직접 root를 가리키도록 포인터를 바꾸어 준다.
+
+## 4. 최소 비용 신장 트리 (MST)
+
+* 신장 트리 (Spanning Tree)
+
+    * 그래프 내 모든 정점을 포함하는 트리
+
+    * 신장 트리는 그래프의 ***최소 연결 부분 그래프***이다.
+
+        * 최소 연결 : 간선의 수가 가장 적다.
+
+        * n개의 정점을 가지는 그래프의 최소 간선 수는 n - 1개 ↔ n - 1개의 간선으로 연결되어 있으면 필연적으로 트리 형태가 되며, 이것이 바로 신장 트리(Spanning Tree)이다.
+
+        * 그래프에서 일부 간선을 선택해 만든 트리
+
+    * [참고](https://gmlwjd9405.github.io/2018/08/28/algorithm-mst.html)
+
+### 1. 최소 비용 신장 트리
+
+* 간선의 개수를 최소로 하여 V개의 모든 정점을 연결하는 방법? (→ 한붓그리기를 생각)
+
+* 모든 정점을 방문하는 최선의 경우의 특징
+
+    1. 여러 가지 방법이 있다.
+
+    2. 사이클이 발생하지 않는다.
+
+    3. 지나가는 간선의 개수 : (V - 1) 개
+
+    * **신장 트리**
+
+        * *트리의 특징*을 가지고 있는 부분 *그래프*이다
+
+    * **최소 비용 신장 트리 (MST)** : 그 중 비용(가중치)의 합이 가장 적은 신장 트리
+
+        * 간선에 ***가중치***를 고려해, ***최소 비용***의 ***신장 트리(Spanning Tree)***를 선택하는 것을 가리킨다.
+
+* 최소 비용 신장 트리를 확인하는 방법
+
+    1. 완전 탐색 : 모든 신장 트리를 구하자 → 시간이 너무 많이 걸린다
+
+    2. Backtracking
+
+    3. DP, Greedy, ...
+
+        * Greedy : 가장 작은 것부터 골라보는 것은 어떨까?
+
+            * 제일 작은 것부터 → Prim Algorithm
+
+            * 특정 노드를 시작으로, 갈 수 있는 곳들 중 가장 작은 곳으로 → Kruskal Algorithm
+
+* 신장 트리
+
+    * n개의 정점으로 이루어진 무방향 그래프에서, n개의 정점과 n - 1개의 간선으로 이루어진 트리
+
+* 최소 신장 트리 (Minimum Spanning Tree)
+
+    * 무방향 가중치 그래프에서 신장 트리를 구성하는 간선들의 가중치의 합이 최소인 신장 트리
+
+* MST 구현 방법
+
+    * 기본적으로 Greedy 알고리즘
+
+    * Prim, Kruskal 알고리즘
+
+### 2. Prim 알고리즘
+
+* 하나의 정점에서 연결된 간선들 중 하나씩 선택해 나가면서 단계적으로 MST를 확장해 만들어가는 방식
+
+    1. 임의 정점을 하나 선택해서 시작
+
+    2. 선택한 정점과 인접하는 정점들 중 최소 비용의 간선이 존재하는 **정점을 선택**
+
+    3. 모든 정점이 선택될 때까지 1 - 2번 과정 반복
+
+* 정점 선택 기반 알고리즘이다.
+
+* 서로소인 2개의 집합 (2-disjoint-sets) 정보를 유지
+
+    * 트리 정점들 (Tree Vertices) : MST를 만들기 위해 선택된 정점들
+
+    * 비트리 정점들 (Nontree Vertices) : 선택되지 않은 정점들
+
+![image](image/89.PNG)
+
+```python
+# 우선순위 큐 (Priority Queue) 활용
+from heapq import heappush, heappop
+
+# class Node:
+#     def __init__(self, num, weight):
+#         self.num = num
+#         self.weight = weight
+
+def prim(start):
+    pq = []
+    MST = [0] * V
+
+    # 최소 비용 - 가중치 합을 계속 저장해줄 것
+    sum_weight = 0
+
+    # 시작점 추가
+    # [BFS] 노드 번호만 관리
+    # [PRIM] 가중치가 낮으면 먼저 나와야 한다.
+    # >> 관리해야 할 데이터가 (가중치, 노드 번호)
+    # 1. class 만들기
+    # 2. tuple로 관리
+    heappush(pq, (0, start))
+
+    while pq:
+        weight, now = heappop(pq)
+
+        # 우선순위 큐 특성상, 더 먼 거리로 가는 방법이 Queue에 저장되어 있기 때문에,
+        # 기존에 이미 더 짧은 거리로 방문했다면 continue
+        # 방문했다면 continue
+        if MST[now]:
+            continue
+
+        # 방문 처리
+        MST[now] = 1
+
+        # 누적합 추가
+        sum_weight += weight
+
+        # 갈 수 있는 노드들(인접)을 보면서
+        for to in range(V):
+            # 갈 수 없다면, 혹은 이미 방문했다면 continue
+            if not graph[now][to] or MST[to]:
+                continue
+
+            heappush(pq, (graph[now][to], to))
+
+    print(f'최소 비용 : {sum_weight}')
+
+V, E = map(int, input().split())
+# 인접 행렬로 저장
+# [과제] - 인접 리스트로 변경
+
+graph = [[0] * V for _ in range(V)]
+for _ in range(E):
+    s, e, w = map(int, input().split()) # 시작 정점, 끝 정점, 간선 가중치
+    graph[s][e] = w
+    graph[e][s] = w # 무방향 그래프
+
+prim(0)
+```
+
+### 3. Kruskal 알고리즘
+
+* *Greedy method를 이용해 간선을 하나씩 선택*해서 MST를 찾는 알고리즘
+
+    1. 최초, 모든 간선을 가중치에 따라 오름차순으로 정렬
+
+    2. 가중치가 가장 낮은 **간선부터 선택**하면서 트리를 증가시킴
+
+    3. n - 1개의 간선이 선택될 때까지 2를 반복
+
+* 간선 선택 기반 알고리즘이다.
+
+![image](image/89.PNG)
+
+```python
+# 1. 전체 그래프를 보고, 가중치가 제일 작은 간선부터 순서대로 뽑음
+#   >> 코드로 구현 : 전체 간선 정보를 저장 + 가중치로 정렬
+
+# 2. 방문 처리
+#   >> 이 때, 사이클이 발생하면 안 된다!
+#   >> 사이클 여부 : union-find 알고리즘이 활용
+
+def make_set(x):
+    return [i for i in range(x)]
+
+def find_set(x):
+    if x == parents[x]:
+        return x
+    
+    # 경로 압축
+    parents[x] = find_set(parents[x])
+    return parents[x]
+
+def union(x, y):
+    x = find_set(x)
+    y = find_set(y)
+
+    # 같은 집합이면 return
+    if x == y:
+        return
+
+    if x < y:
+        parents[y] = x
+    else:
+        parents[x] = y
+
+V, E = map(int, input().split())
+
+edges = []  # 간선 정보들을 모두 저장
+for _ in range(E):
+    s, e, w = map(int, input().split())
+    edges.append([s, e, w])
+edges.sort(key = lambda x: x[2])    # 가중치를 기준으로 정렬
+
+parents = make_set(V)   # 대표자 배열 생성
+
+# MST 완성 = 간선 개수가 V - 1개일 때
+cnt = 0
+sum_weight = 0
+
+# 간선들을 모두 확인한다.
+for s, e, w in edges:
+    # 사이클이 발생하면 continue
+    # 이미 같은 집합에 속해 있다면 continue
+    # 대표자가 같다 == 연결되어 있다!!
+    if find_set(s) == find_set(e):
+        print(s, e, w, ' / 사이클 발생! 탈락!')
+        continue
+
+    print(s, e, w)
+    cnt += 1
+
+    # 사이클이 없으면, 방문 처리
+    union(s, e)
+    sum_weight += w
+
+    if cnt == V - 1:    # MST 완성 == 간선의 개수 V - 1
+        break
+
+print(f'최소 비용 : {sum_weight}')
+```
+
+### 4. 정리
+
+* MST : 최소 비용 **신장 트리**
+
+    * ***전체를 연결***하는 것 중 ***최소!!***
+
+## 5. 최단 경로 (Dijkstra)
+
+* 최단 경로
+
+    * 간선 가중치가 있는 그래프에서 두 정점 사이의 경로들 중 간선의 가중치 합이 최소인 경로
+
+* 하나의 시작 정점에서 끝 정점까지의 최단 경로 - 크게 3가지 알고리즘
+
+    * 하나의 시작 정점에서 끝 정점까지의 최단 경로
+
+        * ***다익스트라 (Dijkstra) 알고리즘*** - 음의 가중치를 허용하지 않음
+
+        * 벨만-포드 (Bellman-Ford) 알고리즘 - 음의 가중치를 허용
+
+    * 모든 정점들에 대한 최단 경로
+
+        * 플로이드-워셜 (Floyd-Warshall) 알고리즘
+
+### 1. Dijkstra 알고리즘
+
+* 시작 정점에서 ***누적*** 거리가 최소인 *인접 정점*을 선택해 나가면서 최단 경로를 구하는 방식
+
+    * 시작 정점($s$)에서 끝 정점($t$)까지의 최단 경로에 정점 $x$가 존재한다.
+
+    * 이 때, 최단 경로는 $s$에서 $x$까지의 최단 경로와 $x$에서 $t$까지의 최단 경로로 구성된다.
+
+* 탐욕 기법을 사용한 알고리즘으로, MST의 Prim 알고리즘과 유사 (→ 단, Prim 알고리즘은 누적 거리가 아님)
+
+![image](image/90.png)
+
+* 시작점 a, 끝 점 f
+
+* dist (누적 거리)
+
+    * 초기 세팅
+
+        | a | b | c | d | e | f |
+        | :---: | :---: | :---: | :---: | :---: | :---: |
+        | 0 | INF | INF | INF | INF | INF |
+        | |
+
+    * [(b, 2), (c, 4)]
+
+        * 갈 수 있는 경로 중 짧은 경로를 뽑자 → 갈 수 있는 후보군들을 저장해놓은, 가중치 기준으로 정렬된 우선순위 큐를 활용
+
+        | a | b | c | d | e | f |
+        | :---: | :---: | :---: | :---: | :---: | :---: |
+        | 0 | 2 | INF | INF | INF | INF |
+        | |
+
+        * 방문 완료된 (b, 2) 제거
+
+    * [(c, 4), (c, 3), (d, 9)] → [(c, 3), (c, 4), (d, 9)]
+
+        * b에서 갈 수 있는 c, d를 우선순위 큐에 추가
+
+        | a | b | c | d | e | f |
+        | :---: | :---: | :---: | :---: | :---: | :---: |
+        | 0 | 2 | 3 | INF | INF | INF |
+        | |
+
+        * 방문 완료된 (c, 3) 제거
+
+    * [(c, 4), (e, 6), (d, 9)]
+
+        * c에 이미 4보다 적은 자원으로 갈 수 있는 방법이 존재하므로 (c, 4) 제거
+
+    * ... (반복)
+
+```python
+from heapq import heappush, heappop
+
+def dijkstra(start):
+    pq = []
+
+    # 시작점의 weight, node 번호를 한 번에 저장
+    heappush(pq, (0, start))
+
+    # 시작 노드 초기화
+    D[start] = 0
+
+    while pq:
+        # 최단 거리 노드에 대한 정보
+        dist, now = heappop(pq)
+
+        # pq의 특성 때문에 더 긴 거리가 미리 저장되어 있음
+        # now 가 이미 더 짧은 거리로 온 적이 있다면 continue
+        if D[now] < dist:
+            continue
+
+        # now 에서 인접한 다른 노드 확인
+        for to in graph[now]:
+            next_dist, next_node = to[0], to[1]
+
+            # 누적 거리 계산
+            new_dist = dist + next_dist
+
+            # 이미 더 짧은 거리로 간 경우 continue
+            if new_dist >= D[next_node]:
+                continue
+
+            D[next_node] = new_dist    # 누적 거리를 최단 거리로 갱신
+            heappush(pq, (new_dist, next_node)) # next_node 로부터 갈 수 있는 노드 추가
+
+V, E = map(int, input().split())
+start = 0   # 시작 노드 번호
+
+# 인접 리스트 (adjl)
+graph = [[] for _ in range(V)]
+
+# 누적 거리를 저장할 변수
+INF = int(1e9)
+D = [INF] * V
+
+# 간선 정보 저장
+for _ in range(E):
+    s, e, w = map(int, input().split())
+    graph[s].append([w, e])
+
+dijkstra(0)
+print(D)
+```
