@@ -13,11 +13,25 @@
   * [Stack](directory/lec-algorithm/3-stack.md)
   * [Queue](directory/lec-algorithm/4-queue.md)
   * [Tree](directory/lec-algorithm/5-tree.md)
+  * [Divide & Conquer](directory/lec-algorithm/6-dnq.md)
+  * [Graph](directory/lec-algorithm/7-graph.md)
 
 ## APS : Algorithm Problem Solving
   * [APS-1](directory/lec-aps/1-aps.md)
   * [APS-2](directory/lec-aps/2-string.md)
   * [CT : Computational Thinking](directory/lec-aps/3-ct.md)
+
+## Web
+  * [HTML & CSS](directory/lec-web/1-html_css.md)
+  * [CSS Layout](directory/lec-web/2-css_layout.md)
+  * [Bootstrap](directory/lec-web/3-bootstrap.md)
+  * [Responsive web](directory/lec-web/4-responsive_web.md)
+
+## Django
+  * [Intro](directory/lec-django/1-intro.md)
+  * [Template](directory/lec-django/2-template.md)
+  * [Model](directory/lec-django/3-model.md)
+  * [ORM](directory/lec-django/4-orm.md)
 
 ## Study
   * [2차원 배열 선언하기 - Shallow Copy Problem](directory/study/001.md)
