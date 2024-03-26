@@ -268,3 +268,473 @@
 
     * [Django Queries - Official Documents](https://docs.djangoproject.com/en/4.2/topics/db/queries/)
 
+## 2. ORM with View
+
+* Django shell에서 연습했던 QuerySet API를 View 함수에서 사용하기
+
+### 1. Read
+
+* 전체 게시글 조회
+
+    ```python
+    # articles/views.py
+
+    from .models import Article
+
+    def index(request):
+        articles = Article.objects.all()
+        context = {
+            'articles': articles,
+        }
+        return render(request, 'articles/index.html', context)
+    ```
+
+    ```html
+    <!-- articles/index.html -->
+
+    <h1>Articles</h1>
+    <hr>
+    {% for article in articles %}
+        <p>글 번호: {{ article.pk }}</p>
+        <p>글 제목: {{ article.title }}</p>
+        <p>글 내용: {{ article.content }}</p>
+        <hr>
+    {% endfor %}
+    ```
+
+* 단일 게시글 조회
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('<int:pk>/', views.detail, name = 'detail'),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    def detail(request, pk):
+        article = Article.objects.get(pk = pk)
+        context = {
+            'article': article,
+        }
+        return render(request, 'articles/detail.html', context)
+    ```
+
+    ```html
+    <!-- articles/detail.html -->
+
+    <h2>DETAIL</h2>
+    <h3>{{ article.pk }}번째 글</h3>
+    <hr>
+    <p>제목: {{ article.title }}</p>
+    <p>내용: {{ article.content }}</p>
+    <p>작성일: {{ article.created_at }}</p>
+    <p>수정일: {{ article.updated_at }}</p>
+    <hr>
+    <a href="{% url 'articles:index' %}">[back]</a>
+    ```
+
+    ```html
+    <!-- articles/index.html -->
+
+    <h1>Articles</h1>
+    <hr>
+
+    {% for article in articles %}
+    <p>글 번호 : {{ article.id }}</p>
+
+    <a href="{% url 'articles:detail' article.pk %}">
+        <p>글 제목 : {{ article.title }}</p>
+    </a>
+
+    <p>글 내용 : {{ article.content }}</p>
+    <hr>
+    {% endfor %}
+    ```
+
+### 2. Create
+
+* Create Logic 구현을 위해 필요한 view 함수는?
+
+    * 사용자 입력 데이터를 받을 페이지를 렌더링 - new
+
+    * 사용자가 입력한 데이터를 받아 DB에 저장 - create
+
+* new
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('new/', views.new, name = 'new'),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    def new(request):
+        return render(request, 'articles/new.html')
+    ```
+
+    ```html
+    <!-- articles/new.html -->
+
+    <h1>NEW</h1>
+    <form action="#" method="GET">
+        <div>
+            <label for="title">Title: </label>
+            <input type="text" name="title" id="title">
+        </div>
+        <div>
+            <label for="content">Content: </label>
+            <textarea name="content" id="content"></textarea>
+        </div>
+        <input type="submit">
+    </form>
+    <hr>
+    <a href="{% url 'articles:index' %}">[back]</a>
+    ```
+
+    * new 페이지로 이동할 수 있는 하이퍼링크 작성
+    ```html
+    <!-- articles/index.html -->
+
+    <h1>Articles</h1>
+    <a href="{% url 'articles:new' %}">NEW</a>
+    <hr>
+    ...
+    ```
+
+* create
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('create/', views.create, name = 'create'),
+    ]
+    ```
+
+    ```html
+    <!-- articles/create.html -->
+
+    <h1>게시글이 작성되었습니다.</h1>
+    ```
+
+    ```python
+    # articles/views.py
+    def create(request):
+        title = request.GET.get('title')
+        content = request.GET.get('content')
+
+        # 1
+        # article = Article()
+        # article.title = title
+        # article.content = content
+        # article.save()
+
+        # 2
+        article = Article(title = title, content = content)
+        article.save()
+
+        # 3
+        # Article.objects.create(title = title, content = content)
+
+        return render(request, 'articles/create.html')
+    ```
+
+    ```html
+    <!-- articles/new.html -->
+    <h1>New</h1>
+    <form action="{% url 'articles:create' %}" method="GET">
+        <input type="text" name="title">
+        <textarea name="content"></textarea>
+        <input type="submit">
+    </form>
+    ```
+
+* HTTP request methods
+
+    * HTTP : 네트워크 상에서 데이터를 주고받기 위한 약속
+
+    * HTTP request methods : 데이터(리소스)에 어떤 요청(행동)을 원하는지를 나타내는 것 - GET & POST
+
+    * GET Method : 특정 리소스를 **조회**하는 요청
+
+        * 데이터를 전달할 때 URL에서 Query String 형식으로 보내짐 → DB에 변화를 주지 않는 행위
+
+        * http://127.0.0.1:8000/articles/create/?***title=제목&content=내용***
+
+    * POST Method : 특정 리소스에 **변경(생성, 수정, 삭제)**을 요구하는 요청 → DB에 ***직접적 변화를 주는*** 행위
+
+        * 데이터는 전달할 때 HTTP Body에 담겨 보내짐
+
+        * ***게시글 생성 요청***이 POST로 바뀌어야 함
+
+        ```html
+        <!-- articles/new.html -->
+
+        <h1>NEW</h1>
+        <form action="{% url 'articles:create' %}" method="POST">
+            ...
+        </form>
+        ```
+
+        ```python
+        # articles/views.py
+
+        def create(request):
+            # title = request.GET.get('title')
+            # content = request.GET.get('content')
+            title = request.POST.get('title')
+            content = request.POST.get('content')
+            ...
+        ```
+
+        * 게시글 작성 후 403 응답 확인
+        ![403Forbidden](image/37.PNG)
+
+    * HTTP response status code : 특정 HTTP 요청이 성공적으로 완료되었는지를 3자리 숫자로 표현하기로 약속한 것
+
+        * 403 Forbidden : 서버에 요청이 전달되었지만, *권한* 떄문에 거절되었다는 것을 의미
+
+        * 404 : Page not Found → 없는 페이지를 요청했거나, 서버에서 해당 페이지를 준비하지 않았거나
+
+        [MDN web docs: HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+
+    * CSRF (Cross-Site-Request-Forgery) : 사이트 간 요청 위조
+
+        * 사용자가 자신의 의지와 무관하게 공격자가 의도한 행동을 하여, 특정 웹 페이지를 보안에 취약하게 하거나 수정, 삭제 등의 작업을 하게 만드는 공격 방법
+
+        * CSRF Token 적용 → Network 탭에서 확인 가능
+
+            * POST는 ***DB를 건드리는*** 행위 → 보안의 관점에서 생각해야 할 이유가 있다.
+
+            * Django 서버는 해당 요청이 DB에 데이터를 하나 생성하는(DB에 영향을 주는) 요청에 대해 *"Django가 직접 제공한 페이지에서 요청을 보낸 것인지"*에 대한 확인 수단이 필요한 것
+
+            * 가짜 사이트에서 오는 요청을 받지 않겠다 → 방지 수단으로 DTL의 csrf_token 태그 사용
+
+            | 기존 | 변경 |
+            | :---: | :---: |
+            | 요청 데이터 → 게시글 작성 | 요청 데이터 + **인증 토큰** → 게시글 작성 |
+            | |
+
+                * 요청 시 토큰 값도 함께 서버로 전송
+
+            ```html
+            <!-- articles/new.html -->
+
+            <h1>NEW</h1>
+            <form action="{% url 'articles:create' %}" method="POST">
+                {% csrf_token %}
+                ...
+            ```
+        * 왜 POST일 때만 Token을 확인할까?
+
+            * POST는 단순 조회를 위한 GET과 달리, 특정 리소스에 변경(생성, 수정, 삭제)을 요구하는 의미와 기술적인 부분을 갖고 있기 때문
+
+            * DB에 조작을 가하는 요청은 반드시 인증 수단이 필요
+
+            * DB에 대한 변경사항을 만드는 요청이기 때문에, 토큰을 사용해 최소한의 신원 확인을 하는 것
+
+* redirect
+
+    * 게시글 작성 후 완료를 알리는 페이지를 응답하는 것
+
+        * 게시글을 "조회해줘!" 라는 요청이 아닌, "작성해줘!" 라는 요청이기 때문에, 게시글 저장 후 페이지를 응답하는 것은 POST 요청에 대한 적절한 응답이 아님
+
+        * 데이터 저장 후 페이지를 주는 것이 아닌, 다른 페이지로 사용자를 보내야 한다.
+
+            * "사용자를 보낸다." == **"사용자가 GET 요청을 한번 더 보내도록 해야 한다."**
+
+            ![image](image/38.PNG)
+
+    * redirect() : 클라이언트가 인자에 작성된 주소로 다시 요청을 보내도록 하는 함수
+
+        ```python
+        # articles/views.py
+        from django.shortcuts import render, redirect
+
+        def create(request):
+            title = request.POST.get('title')
+            content = request.POST.get('content')
+            article = Article(title = title, content = content)
+            article.save()
+
+            # redirect(주소, 파라미터)
+            return redirect('articles:detail', article.pk)
+        ```
+
+        ![image](image/39.png)
+
+        * 게시글 작성 후 생성된 게시글의 detail 페이지로 redirect되었는지 확인
+
+        * create 요청 이후에 detail로 다시 요청을 보냈다는 것을 알 수 있음
+
+### 3. Delete
+
+* 삭제 → 조회가 필수적으로 선행되어야 함 → variable routing이 존재해야 함
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('<int:pk>/delete/', views.delete, name = 'delete'),
+    ]
+    ```
+
+    ```python
+    # articles/urls.py
+
+    def delete(request, pk):
+        article = Article.objects.get(pk = pk)
+        article.delete()
+        return redirect('articles:index')   # 게시글 삭제가 잘 되면 메인 페이지로 이동
+    ```
+
+    ```html
+    <!-- articles/detail.html -->
+
+    <body>
+        <h2>DETAIL</h2>
+        ...
+        <hr>
+        <form action="{% url 'articles:delete' article.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="DELETE">
+        </form>
+        <a href="{% url 'articles:index' %}">[back]</a>
+    </body>
+    ```
+
+### 4. Update
+
+* Update Logic 구현을 위해 필요한 view 함수는?
+
+    * 사용자 입력 데이터를 받을 페이지를 렌더링 - edit
+
+    * 사용자가 입력한 데이터를 받아 DB에 저장 - update
+
+* edit
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('<int:pk>/edit/', views.edit, name = 'edit'),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    def edit(request, pk):
+        article = Article.objects.get(pk = pk)
+        context = {
+            'article': article,
+        }
+        return render(request, 'articles/edit.html', context)
+    ```
+
+    * 수정 시 이전 데이터가 출력될 수 있도록 작성하기
+
+    ```html
+    <!-- articles/edit.html -->
+    <h1>EDIT</h1>
+    <form action="#" method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="title">Title: </label>
+            <input type="text" name="title" id="title" value="{{ article.title }}">
+        </div>
+        <div>
+            <label for="content">Content: </label>
+            <textarea name="content" id="content">{{ article.content }}</textarea>
+        </div>
+        <input type="submit">
+    </form>
+    <hr>
+    <a href="{%url 'articles:index' %}">[back]</a>
+    ```
+
+    * edit 페이지로 이동하기 위한 하이퍼링크 작성
+
+    ```html
+    <!-- articles/detail.html -->
+
+    <body>
+        <a href="{% url 'articles:edit' article.pk %}">EDIT</a><br>
+        <form action="{% url 'articles:delete' article.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="DELETE">
+        </form>
+        <a href="{% url 'articles:index' %}">[back]</a>
+    </body>
+    ```
+
+* update
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...
+        path('<int:pk>/update/', views.update, name = 'update'),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    def update(request, pk):
+        article = Article.objects.get(pk = pk)
+        article.title = request.POST>get('title')
+        article.content = request.POST>get('content')
+        article.save()
+
+        return redireect('articles:detail', article.pk)
+    ```
+
+    * 작성 후 게시글 수정 테스트 - action 부분 수정
+
+    ```html
+    <!-- articles/edit.html -->
+    <h1>EDIT</h1>
+    <form action="{% url 'articles:update' article.pk %}" method="POST">
+        ...
+    ```
+
+### 5. 참고
+
+* GET 과 POST
+
+| | GET | POST |
+| :---: | :---: | :---: |
+| 데이터 전송 방식 | URL의 Query String Parameter | HTTP Body |
+| 데이터 크기 제한 | 브라우저 제공 URL의 최대 길이 | 제한 없음 |
+| 사용 목적 | 데이터 검색 및 조회 | 데이터 제출 및 조작 |
+| |
+
+* GET 요청이 필요한 경우
+
+    | Purpose | Explanation |
+    | :---: | :--- |
+    | 캐싱 및 성능 | GET 요청은 캐시(Cache)될 수 있고, 이전에 요청한 정보를 새로 요청하지 않고 사용할 수 있음<br>특히, 동일한 검색 결과를 여러 번 요청하는 경우 GET 요청은 캐시를 활용하여 더 빠르게 응답할 수 있음 |
+    | 가시성 및 공유 | GET 요청은 URL에 데이터가 노출되어 있기 때문에 사용자가 해당 URL을 북마크하거나 다른 사람과 공유하기 용이 |
+    | RESTful API 설계 | HTTP 메서드의 의미에 따라 동작하도록 디자인된 API의 일관성을 유지할 수 있음 |
+    | |
+
+* 캐시 (Cache)
+
+    * 데이터나 정보를 임시로 저장해두는 메모리나 디스크 공간
+
+    * 이전에 접근한 데이터를 빠르게 검색하고 접근할 수 있도록 함
