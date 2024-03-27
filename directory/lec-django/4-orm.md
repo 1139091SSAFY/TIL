@@ -1,6 +1,6 @@
 # Django - ORM
 
-<div style="text-align: right"> 24. 03. 25. </div>
+<div style="text-align: right"> 24. 03. 25. ~ 24. 03. 26. </div>
 
 ## 1. ORM
 
