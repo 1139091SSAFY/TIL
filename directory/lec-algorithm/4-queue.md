@@ -48,10 +48,10 @@
 
 * front와 rear가 같다 == 큐가 비었다고 판단
 
-```python
-def isEmpty():
-    return front == rear
-```
+    ```python
+    def isEmpty():
+        return front == rear
+    ```
 
 ### 2. 큐의 구현
 
@@ -65,12 +65,12 @@ def isEmpty():
 
     * rear : 저장된 마지막 원소의 인덱스
 
-    | 상태 표현 | notation |
-    | :---: | :---: |
-    | 초기 상태 | front = rear = -1 |
-    | 공백 상태 | front == rear |
-    | 포화 상태 | rear == n - 1 |
-    | |
+        | 상태 표현 | notation |
+        | :---: | :---: |
+        | 초기 상태 | front = rear = -1 |
+        | 공백 상태 | front == rear |
+        | 포화 상태 | rear == n - 1 |
+        | |
 
     * n : 배열의 크기
 
@@ -133,13 +133,13 @@ def isEmpty():
 
         * 현재 front의 한자리 뒤(front + 1)에 있는 원소, 즉 큐의 첫 번째에 있는 원소를 반환
 
-        ```python
-        def Qpeek():
-            if isEmpty():
-                print('Queue_Empty')
-            else:
-                return Q[front + 1]
-        ```
+            ```python
+            def Qpeek():
+                if isEmpty():
+                    print('Queue_Empty')
+                else:
+                    return Q[front + 1]
+            ```
 
 2. 원형큐 (Circular Queue, 순환큐)
 
@@ -171,17 +171,17 @@ def isEmpty():
 
         * 공백 상태 / 포화 상태 구분을 쉽게 하기 위해 front가 있는 자리는 사용하지 않고 항상 빈 자리로 둠
 
-        | | 삽입 위치 | 삭제 위치 |
-        | :---: | :---: | :---: |
-        | 선형큐 | rear = rear + 1 | front = front + 1 |
-        | 원형큐 | rear = (rear + 1) mod n | front = (front + 1) mod n |
-        | |
+            | | 삽입 위치 | 삭제 위치 |
+            | :---: | :---: | :---: |
+            | 선형큐 | rear = rear + 1 | front = front + 1 |
+            | 원형큐 | rear = (rear + 1) mod n | front = (front + 1) mod n |
+            | |
 
-        ![원형 큐의 구현](image/42.PNG)
+            ![원형 큐의 구현](image/42.PNG)
 
-        ![원형 큐의 구현](image/43.PNG)
+            ![원형 큐의 구현](image/43.PNG)
 
-        ![원형 큐의 구현](image/44.PNG)
+            ![원형 큐의 구현](image/44.PNG)
 
     1. 초기 공백 큐 생성
 
@@ -197,13 +197,13 @@ def isEmpty():
 
             * (rear + 1) mod n == front
 
-        ```python
-        def isEmpty():
-            return front == rear
+            ```python
+            def isEmpty():
+                return front == rear
 
-        def isFull():
-            return front == (rear + 1) % len(cQ)
-        ```
+            def isFull():
+                return front == (rear + 1) % len(cQ)
+            ```
 
     3. 삽입 : enQueue(item)
 
@@ -215,15 +215,15 @@ def isEmpty():
 
         2. 그 인덱스에 해당하는 배열 원소 cQ[rear]에 item을 저장
 
-        ```python
-        def enQueue(item):
-            global rear
-            if isFull():
-                print('Queue_Full')
-            else:
-                rear = (rear + 1) % len(cQ)
-                cQ[rear] = item
-        ```
+            ```python
+            def enQueue(item):
+                global rear
+                if isFull():
+                    print('Queue_Full')
+                else:
+                    rear = (rear + 1) % len(cQ)
+                    cQ[rear] = item
+            ```
 
     4. 삭제 : deQueue(), delete()
 
@@ -233,15 +233,15 @@ def isEmpty():
 
         2. 새로운 front 원소를 리턴함으로써 삭제와 동일한 기능
 
-        ```python
-        def deQueue():
-            global front
-            if isEmpty():
-                print('Queue_Empty')
-            else:
-                front = (front + 1) % len(cQ)
-                return cQ[front]
-        ```
+            ```python
+            def deQueue():
+                global front
+                if isEmpty():
+                    print('Queue_Empty')
+                else:
+                    front = (front + 1) % len(cQ)
+                    return cQ[front]
+            ```
 
 3. 연결큐 (Linked Queue)
 
@@ -281,13 +281,13 @@ def isEmpty():
 
         * popleft() : 왼쪽에서 요소를 제거하고 반환. 요소가 없으면 IndexError
 
-        ```python
-        from collections import deque
+            ```python
+            from collections import deque
 
-        q = deque()
-        q.append(1)     # enqueue()
-        t = q.popleft() # dequeue()
-        ```
+            q = deque()
+            q.append(1)     # enqueue()
+            t = q.popleft() # dequeue()
+            ```
 
 5. 우선순위 큐 (Priority Queue) - 구현은 트리에서
 
@@ -345,64 +345,64 @@ def isEmpty():
 
     * 인접 정점들에 대해 탐색 진행 후, 차례로 다시 너비우선탐색을 진행해야 하므로, 선입선출 형태 자료인 큐를 활용함
     
-        ![BFS](image/50.PNG)
+    ![BFS](image/50.PNG)
 
-        * 탐색 순서 : A → (B → C → D) → (E → F) → (G → H → I)
+    * 탐색 순서 : A → (B → C → D) → (E → F) → (G → H → I)
 
-            0. visited 배열 초기화, 큐 생성
+        0. visited 배열 초기화, 큐 생성
 
-            1. 탐색 시작 → 큐에 시작점 A를 enQueue
+        1. 탐색 시작 → 큐에 시작점 A를 enQueue
 
-            2. deQueue A → A 방문 표시, 동시에 A의 인접 정점 B, C, D를 enQueue
+        2. deQueue A → A 방문 표시, 동시에 A의 인접 정점 B, C, D를 enQueue
 
-            3. deQueue B → B 방문 표시, 동시에 B의 인접 정점 E, F를 enQueue
+        3. deQueue B → B 방문 표시, 동시에 B의 인접 정점 E, F를 enQueue
 
-            4. deQueue C → C 방문 표시, 동시에 C의 인접 정점을 enQueue (→ 인접 정점이 없음)
+        4. deQueue C → C 방문 표시, 동시에 C의 인접 정점을 enQueue (→ 인접 정점이 없음)
 
-            5. deQueue D → D 방문 표시, 동시에 D의 인접 정점 G, H, I를 enQueue
+        5. deQueue D → D 방문 표시, 동시에 D의 인접 정점 G, H, I를 enQueue
 
-            6. ...
+        6. ...
 
-            7. 모든 곳을 방문했다면 큐가 비었으므로 탐색 종료
+        7. 모든 곳을 방문했다면 큐가 비었으므로 탐색 종료
 
-                * 꺼낸 후에 visited를 표시하는 방법과, enQueue와 동시에 visited를 입력하는 방법을 상황에 맞춰 고려해야 할 필요가 있음
+            * 꺼낸 후에 visited를 표시하는 방법과, enQueue와 동시에 visited를 입력하는 방법을 상황에 맞춰 고려해야 할 필요가 있음
 
-            ```python
-            def BFS(G, v):                      # 그래프 G, 탐색 시작점 v
-                visited = [0] * (n + 1)         # n : 정점의 개수
-                queue = []                      # 큐 생성
-                queue.append(v)                 # 시작점 v를 큐에 삽입
-                while queue:                    # 큐가 비어있지 않은 경우
-                    t = queue.pop(0)            # 큐의 첫번째 원소 반환
-                    if not visited[t]:          # 방문하지 않은 곳이라면
-                        visited[t] = True       # 방문한 것으로 표시
-                        visit(t)                # 정점 t에서 할 일
-                        for i in G[t]:          # t와 연결된 모든 정점에 대해
-                            if not visited[i]:  # 방문되지 않은 곳이라면
-                                queue.append(i) # 큐에 넣기
-            ```
-            
-            ```python
-            def BFS(G, v, n):                   # 그래프 G, 탐색 시작점 v
-                visited = [0] * (n + 1)         # n : 정점의 개수
-                queue = []                      # 큐 생성
-                queue.append(v)                 # 시작점 v를 큐에 삽입
-                visited[v] = 1
-                while queue:                    # 큐가 비어있지 않은 경우
-                    t = queue.pop(0)            # 큐의 첫번째 원소 반환
-                    visit(t)
-                    for i in G[t]:              # t와 연결된 모든 정점에 대해
-                        if not visited[i]:      # 방문되지 않은 곳이라면
-                            queue.append(i)     # 큐에 넣기
-                            visited[i] = visited[t] + 1     # n으로부터 1만큼 이동
-            ```
+        ```python
+        def BFS(G, v):                      # 그래프 G, 탐색 시작점 v
+            visited = [0] * (n + 1)         # n : 정점의 개수
+            queue = []                      # 큐 생성
+            queue.append(v)                 # 시작점 v를 큐에 삽입
+            while queue:                    # 큐가 비어있지 않은 경우
+                t = queue.pop(0)            # 큐의 첫번째 원소 반환
+                if not visited[t]:          # 방문하지 않은 곳이라면
+                    visited[t] = True       # 방문한 것으로 표시
+                    visit(t)                # 정점 t에서 할 일
+                    for i in G[t]:          # t와 연결된 모든 정점에 대해
+                        if not visited[i]:  # 방문되지 않은 곳이라면
+                            queue.append(i) # 큐에 넣기
+        ```
+        
+        ```python
+        def BFS(G, v, n):                   # 그래프 G, 탐색 시작점 v
+            visited = [0] * (n + 1)         # n : 정점의 개수
+            queue = []                      # 큐 생성
+            queue.append(v)                 # 시작점 v를 큐에 삽입
+            visited[v] = 1
+            while queue:                    # 큐가 비어있지 않은 경우
+                t = queue.pop(0)            # 큐의 첫번째 원소 반환
+                visit(t)
+                for i in G[t]:              # t와 연결된 모든 정점에 대해
+                    if not visited[i]:      # 방문되지 않은 곳이라면
+                        queue.append(i)     # 큐에 넣기
+                        visited[i] = visited[t] + 1     # n으로부터 1만큼 이동
+        ```
 
-        ![연습문제](image/51.PNG)
+    ![연습문제](image/51.PNG)
 
-            * DFS : 1 → 2 → 4 → 6 → 7 → 3 → 5 (간선의 방향성이 없는 무향 그래프의 경우)
+        * DFS : 1 → 2 → 4 → 6 → 7 → 3 → 5 (간선의 방향성이 없는 무향 그래프의 경우)
 
-            * BFS : 1 → 2 → 3 → 4 → 5 → 7 → 6
+        * BFS : 1 → 2 → 3 → 4 → 5 → 7 → 6
 
 ### 0. 참고
 
-    * Pycharm의 콘솔 버퍼는 circular buffer이며 기본 크기는 1MB이기 때문에, 1MB가 넘는 자료를 입력하게 되면 앞의 자료를 뒤의 자료가 덮어씌우는 현상이 발생하게 된다.
+* Pycharm의 콘솔 버퍼는 circular buffer이며 기본 크기는 1MB이기 때문에, 1MB가 넘는 자료를 입력하게 되면 앞의 자료를 뒤의 자료가 덮어씌우는 현상이 발생하게 된다.

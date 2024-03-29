@@ -1,11 +1,11 @@
 # Today I Learned
 
 ## Python
-  * [Fundamentals of Python](directory/lec-python/lec-python.md)
-  * [Functions](directory/lec-python/lec-python-func.md)
-  * [Module & Control of Statements](directory/lec-python/lec-python-module.md)
-  * [Data Structure](directory/lec-python/lec-python-data_structure.md)
-  * [OOP : Object Oriented Programming](directory/lec-python/lec-python-oop.md)
+  * [Fundamentals of Python](directory/lec-python/1-python.md)
+  * [Functions](directory/lec-python/2-func.md)
+  * [Module & Control of Statements](directory/lec-python/3-module.md)
+  * [Data Structure](directory/lec-python/4-data_structure.md)
+  * [OOP : Object Oriented Programming](directory/lec-python/5-oop.md)
 
 ## Algorithm
   * [Arrays](directory/lec-algorithm/1-array.md)
