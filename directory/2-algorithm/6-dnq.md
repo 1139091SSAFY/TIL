@@ -270,3 +270,12 @@
     * 완전탐색 + 가지치기
 
     * 가능성이 없는(볼 필요 없는) 경우의 수를 제거하는 기법
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

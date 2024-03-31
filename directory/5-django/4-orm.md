@@ -738,3 +738,12 @@
     * 데이터나 정보를 임시로 저장해두는 메모리나 디스크 공간
 
     * 이전에 접근한 데이터를 빠르게 검색하고 접근할 수 있도록 함
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

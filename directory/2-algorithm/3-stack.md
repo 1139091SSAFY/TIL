@@ -669,3 +669,12 @@
     * 이후 가지치기가 가능한 경우를 고려
 
     * 결국 최악의 경우 모든 경우를 다 고려하게 되겠지만, 평균적으로 연산 시간이 짧아질 것
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

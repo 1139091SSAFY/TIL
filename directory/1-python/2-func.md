@@ -556,3 +556,12 @@ greet('Charlie', 40)  # 안녕하세요, Charlie님! 40살이시군요.
     * ‘**’  
 
         * Unpacking 연산자로 사용될 때, dict의 key-value 쌍을 키워드 인자로 Unpacking하여 함수의 인자로 전달하는 역할
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

@@ -284,3 +284,12 @@
     * ModelForm의 상위 class인 BaseModelForm의 생성자 함수 키워드 인자
 
     ![image](image/47.PNG)
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

@@ -298,3 +298,12 @@
     * 저장소의 크기를 줄이며 정확한 정보를 저장하는 알고리즘
 
     * 대표적으로 이미지 파일 포맷 중 BMP 포맷의 압축 방법, 흑백 이미지의 경우 이득을 볼 확률이 높을 것이다.
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

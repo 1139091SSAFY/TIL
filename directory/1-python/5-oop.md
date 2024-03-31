@@ -995,3 +995,12 @@ print(MyClass.static_method())  # static method
     | |
 
 * [파이썬 자습서 ~ 9.5까지의 내용](https://docs.python.org/ko/3/tutorial/index.html)
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

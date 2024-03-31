@@ -421,3 +421,12 @@
         * ***makemigrations를 통한 DB table 생성에 직접 사용되지 않으며***, 대신 다른 모델의 기본 클래스로 사용되는 경우 해당 필드가 하위 클래스의 필드에 추가됨
 
             * 직접적으로 설계도를 만들기 위해 쓰여지는 클래스가 아닌, 다른 클래스를 만들 때 도움을 주는 (기능만 제공하는) 클래스 → 메모리를 아끼기 위해
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

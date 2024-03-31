@@ -455,3 +455,12 @@ render(request, template_name, context)
 3. Django는 ***정해진 경로***에 있는 template 파일만 읽어올 수 있음
 
     * app 폴더/templates/이후
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

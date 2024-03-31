@@ -271,3 +271,12 @@
     * Django는 검색 엔진이 혼동하지 않게 하기 위해 무조건 붙이는 것을 선택
 
     * 모든 Framework가 이렇게 동작하는 것은 아님에 주의
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

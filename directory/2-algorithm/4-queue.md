@@ -406,3 +406,12 @@
 ### 0. 참고
 
 * Pycharm의 콘솔 버퍼는 circular buffer이며 기본 크기는 1MB이기 때문에, 1MB가 넘는 자료를 입력하게 되면 앞의 자료를 뒤의 자료가 덮어씌우는 현상이 발생하게 된다.
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>

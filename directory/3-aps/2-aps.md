@@ -184,3 +184,13 @@
         2. 빠르게 끝나는 회의를 선택해 확정
 
         3. 이후로 가능한 회의 중, 빠르게 끝나는 회의를 선택해 확정
+   
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>
