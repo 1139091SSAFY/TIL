@@ -66,13 +66,23 @@
 
 ## SelfStudy
 
-* [2차원 배열 선언하기 - Shallow Copy Problem](directory/0-selfstudy/001.md)
+### Python
 
-* [2개 이상 조건으로 정렬하기](directory/0-selfstudy/002.md)
+* [2차원 배열 선언하기 - Shallow Copy Problem](directory/0-selfstudy/py-001.md)
 
-* [시간 복잡도 문제](directory/0-selfstudy/003.md)
+* [2개 이상 조건으로 정렬하기](directory/0-selfstudy/py-002.md)
 
-* [재귀함수의 활용 - DFS, Backtracking 등](directory/0-selfstudy/004.md)
+### Java
+
+### Algorithm
+
+* [시간 복잡도 문제](directory/0-selfstudy/algo-001.md)
+
+* [재귀함수의 활용 - DFS, Backtracking 등](directory/0-selfstudy/algo-002.md)
+
+### System
+
+* [VSCode - Markdown, LaTeX 다루기](directory/0-selfstudy/sys-001.md)
 
 ## etc.
 
