@@ -80,6 +80,12 @@
 
 * [재귀함수의 활용 - DFS, Backtracking 등](directory/0-selfstudy/algo-002.md)
 
+### Django
+
+### DB
+
+* [Field에서 연도 추출하기 - strftime function](directory/0-selfstudy/db-001.md)
+
 ### System
 
 * [VSCode - Markdown, LaTeX 다루기](directory/0-selfstudy/sys-001.md)
