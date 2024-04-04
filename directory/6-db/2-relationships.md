@@ -1,6 +1,6 @@
 # DataBase - Many to One Relationships
 
-<div style="text-align: right"> 24. 04. 03. </div>
+<div style="text-align: right"> 24. 04. 03. ~ 24. 04. 04. </div>
 
 ## 1. Many to One Relationships
 
@@ -382,6 +382,262 @@
     </ul>
     ```
 
+## 2. Article & User
+
+### 1. Model 관계 설정
+
+* Article(N) - User(1) : 0개 이상의 게시글은 1명의 회원에 의해 작성될 수 있다.
+
+* N 쪽에 외래 키가 배치된다.
+
+    ```python
+    # articles/models.py
+
+    # from accounts.models import User
+    # Django에서는 User model을 '직접' 참조하지 않는다. → get_user_model() 함수를 대신 사용했던 것을 기억
+
+    # from django.contrib.auth import get_user_model
+    # Django의 내부적인 구동 순서 및 반환값에 따른 이유로 사용하지 않는다.
+
+    from django.conf import settings
+
+    class Article(models.Model):
+        # user = models.ForeignKey(User, on_delete = models.CASCADE)
+        # user = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+        title = models.CharField(max_length = 10)
+        content = models.TextField()
+        created_at = models.DateTimeField(auto_now_add = True)
+        updated_at = models.DateTimeField(auto_now = True)
+    ```
+
+    * *User model을 참조하는 2가지 방법*
+    
+        | | get_user_model() | settings.AUTH_USER_MODEL |
+        | :---: | :---: | :---: |
+        | 반환 값 | User Object<br>(객체) | 'accounts.User'<br>(문자열) |
+        | 사용 위치 | **models.py가 아닌**<br>다른 모든 위치 | **models.py** |
+        | |
+
+    * django project '내부적인 구동 순서'와 '반환 값'에 따른 이유
+
+        * get_user_model()을 사용하지 못하는 이유
+        
+            * 전체 프로그램 구동 시 models.py의 구동 우선 순위가 빠른데, 이 시점에 get_user_model()로 반환되는 User object를 정의할 수 없어 오류 발생
+
+            * 따라서, 문자열을 반환해 주는 settings.AUTH_USER_MODEL을 사용해 우선 입력해 주고, 프로그램 구동 순서에 따라 나중에 처리
+
+    * 어느 쪽이든 User model은 직접 참조하지 않는다는 것
+
+* model 변경 후 migration 수행
+
+    * 기본적으로 모든 field에는 NOT NULL constraints가 있기 때문에, user 데이터를 추가하지 않으면 새로운 field가 추가되지 못함
+
+    * console 창에서 각각 값을 직접 입력해주거나, models에 default 속성을 직접 지정해주는 방법이 있음
+
+### 2. 게시글 CREATE
+
+* User model에 대한 외래 키 데이터 입력을 받기 위해 불필요한 input이 출력됨
+
+    ![image](image/018.PNG)
+
+    ```python
+    # articles/forms.py
+
+    class ArticleForm(forms.ModelForm):
+        class Meta:
+            model = Article
+            fields = ('title', 'content', )
+    ```
+
+* 게시글 작성 시 에러 발생 → user_id field data 입력이 누락되었기 때문
+
+    * NOT NULL constrains failed: articles_article.user_id
+
+* 게시글 작성 시 작성자 정보가 함께 저장될 수 있도록 save의 commit 옵션 활용
+
+    ```python
+    # articles/views.py
+
+    @login_required
+    def create(request):
+        if request.method == "POST":
+            form = ArticleForm(request.POST)
+            if form.is_valid():
+                article = form.save(commit = False)
+                article.user = request.user     # 게시글 작성자는 DB 수정 요청자이다
+                article.save()
+                return redirect('articles:detail', article.pk)
+        else:
+            ...
+    ```
+
+### 3. 게시글 READ
+
+* 각 게시글의 작성자 이름 출력
+
+    ```HTML
+    <!-- articles/index.html -->
+    {% for article in articles %}
+        <p>작성자 : {{ article.user }}</p>
+            <!-- {{ article.user.username }} 속성에 저장되어 있지만, User model 설계 상 magic method로 인해 user 객체만 출력 시에 username이 출력되도록 되어 있음 -->
+        <p>글 번호: {{ article.pk }}</p>
+        <a href="{% url 'articles:detail' article.pk %}">
+        <p>글 제목: {{ article.title }}</p>
+        </a>
+        <p>글 내용: {{ article.content }}</p>
+        <hr>
+    {% endfor %}
+    ```
+
+### 4. 게시글 UPDATE
+
+```{:.pseudocode}
+# Article → User (참조) : article.user
+
+# User → Article (역참조) : user.article_set.all()
+```
+
+* 본인의 게시글만 수정할 수 있도록 하기
+
+    * 게시글 수정 요청자 == 게시글 작성자인가??
+
+    ```python
+    # articles/views.py
+
+    @login_required     # login 조건만 요구하는 부분, 게시글 수정 요청자 == 게시글 작성자인지까지는 확인해주지 않음
+    def update(request, pk):
+        article = Article.objects.get(pk = pk)
+        if request.user == article.user:    # 게시글 수정 요청자 == 게시글 작성자라면
+            if request.method == "POST":
+                form = ArticleForm(request.POST, instance = article)    # Update는 instance 변수를 넣어주기 때문에, 별도로 commit을 통해 작성자를 입력해주는 과정이 필요없다.
+                ...
+        
+        else:
+            return redirect('articles:index')   # 게시글 수정 요청자 != 게시글 작성자라면 main page로 보내버림
+    ```
+
+    ```HTML
+    <!-- articles/detail.html -->
+
+    <!-- 요청자가 게시글 작성자라면 표시 -->
+    {% if request.user == article.user %}
+        <a href="{% url 'articles:update' article.pk %}">UPDATE</a>
+        <form action="{% url 'articles:delete' article.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="DELETE">
+        </form>
+    {% endif %}
+    ```
+
+### 5. 게시글 DELETE
+
+* 본인의 게시글만 삭제할 수 있도록 하기
+
+    * 게시글 삭제 요청자 == 게시글 작성자인가??
+
+    ```python
+    # articles/views.py
+
+    @login_required
+    def delete(request, pk):
+        article = Article.objects.get(pk = pk)
+        if request.user == article.user:    # 게시글 삭제 요청자 == 게시글 작성자라면 삭제
+            article.delete()
+        return redirect('articles:index')
+    ```
+
+## 3. Comment & User
+
+### 1. Model 관계 설정
+
+* Comment(N) - User(1) : 0개 이상의 댓글은 1명의 회원에 의해 작성될 수 있다.
+
+* N 쪽에 외래 키가 배치된다.
+
+    ```python
+    # articles/models.py
+
+    class Comment(models.Model):
+        article = models.ForeignKey(Article, on_delete=models.CASCADE)
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)  # accounts.User로 작성되는 instance를 외래 키로 받아 입력하는 field 작성
+        content = models.CharField(max_length=200)
+        created_at = models.DateTimeField(auto_now_add=True)
+        updated_at = models.DateTimeField(auto_now=True)        
+    ```
+
+### 2. 댓글 CREATE
+
+* 댓글 작성 시 이전에 게시글 작성 시와 같은 에러 발생
+
+    * NOT NULL constraints failed: articles_comment.user_id
+
+    ```python
+    # articles/views.py
+    
+    def comments_create(request, pk):
+        article = Article.objects.get(pk=pk)
+        comments = article.comment_set.all()
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.article = article
+            comment.user = request.user # 댓글 작성 시 작성자 정보가 함께 저장될 수 있도록 작성
+            comment.save()
+            ...
+    ```
+
+### 3. 댓글 READ
+
+* 댓글 출력 시 댓글 작성자와 함께 출력
+
+    ```HTML
+    <!-- articles/detail.html -->
+
+    {% for comment in comments %}
+        <li>
+            {{ comment.user }} - {{ comment.content }}
+            ...
+        </li>
+    {% endfor %}
+    ```
+
+### 4 댓글 DELETE
+
+* 본인의 댓글만 삭제할 수 있도록 하기
+
+    * 댓글 삭제 요청자 == 댓글 작성자인가??
+
+    ```python
+    # articles/views.py
+
+    def comments_delete(request, article_pk, comment_pk):
+        comment = Comment.objects.get(pk = comment_pk)
+        if request.user == comment.user:        # 댓글 삭제 요청자 == 댓글 작성자라면
+            comment.delete()
+        return redirect('articles:detail', article_pk)
+    ```
+
+    * 해당 댓글의 작성자가 아니라면, 댓글 삭제 버튼을 출력하지 않도록 함
+
+    ```HTML
+    <!-- articles/detail.html -->
+
+    <ul>
+        {% for comment in comments %}
+        <li>
+            {{ comment.user }} - {{ comment.content }}
+            {% if request.user == comment.user %}
+            <form action="{% url "articles:comments_delete" article.pk comment.pk %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <input type="submit" value="삭제">
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    ```
+
 ## 0. 참고
 
 * admin site 등록
@@ -435,6 +691,54 @@
     <!-- view 함수에서 미리 계산을 끝낸 다음 보내는 것이 더 좋을 것 -->
     ```
 
+* 인증된 사용자만 댓글 작성 및 삭제
+
+    * decorator 사용
+
+    ```python
+    # articles/views.py
+
+    @login_required
+    def comments_create(request, pk):
+        pass
+
+    @login_required
+    def comments_delete(request, article_pk, comment_pk):
+        pass
+    ```
+
+* ERD (Entity-Relationship Diagram, 개체-관계 다이어그램)
+
+    * 데이터의 '구조' 및 그에 수반한 제약 조건을 설계하는 기법 중 하나인 ERM(Entity-Relationship Modeling, 개체-관계 모델링) 프로세스의 산출물을 가리킴
+
+    * Crow's Foot Notation
+
+        * Entity 사이의 관계를 기본적으로 entitiy를 연결하는 선으로 나타내고, 관계의 cardinality를 나타내는 기호들을 그 선의 양끝에 연결함
+
+        ![image](image/019.png)
+
+        * Crow's Foot Notation을 활용하면 다수 관계(N:1 relations)를 표현하는 것이 명확해짐
+
+    * [Wikipedia 참고](https://ko.wikipedia.org/wiki/%EA%B0%9C%EC%B2%B4-%EA%B4%80%EA%B3%84_%EB%AA%A8%EB%8D%B8)
+
+* POST 요청 조건임을 필요로 할 때 - decorator 사용 가능
+
+    ```python
+    # articles/views.py
+
+    from django.views.decorators.http import require_POST
+
+    # decorator는 순서에 따라 실행되기 때문에, process 순서가 중요한 경우 유의해야 함
+    @login_required
+    @required_POST
+    def comments_delete(request, articke_pk, comment_pk):
+        comment = Comment.objects.get(pk = comment_pk)
+        if request.user == comment.user:
+            comment.delete()
+        return redirect('articles:detail', article_pk)
+    ```
+
 * NoReverseMatch 발생 시
 
     * 현재 페이지의 url tag 체크
+
