@@ -475,9 +475,6 @@ doctors.patient_set.all()
 
     {% for article in articles %}
         ...
-
-        
-
         <form action="{% url 'articles:likes' article.pk %}" method="POST">
         {% csrf_token %}
         {% if request.user in article.like_users.all %}
@@ -505,9 +502,515 @@ doctors.patient_set.all()
         ...
     ```
 
+## 3. 팔로우 기능 구현하기
+
+### 1. 프로필 페이지 구현
+
+* 각 회원의 개인 프로필 페이지에 팔로우 기능을 구현하기 위해 프로필 페이지 먼저 구현하기
+
+    ```python
+    # username으로 각기 사용자들의 프로필 url 구현 가능 (ex. 인스타그램)
+    # url 작성
+    # accounts/urls.py
+
+    urlpatterns = [
+        ...
+        path('profile/<str:username>/', views.profile, name='profile'),
+
+        # path('<str:username>/', ...) 가 맨 앞에 있다면, 문자열로 시작하는 주소가 모두 variable routing에 걸쳐지게 되어 나머지 path로 접근할 수 없음
+
+        # 가급적 string에 대한 variable routing은 별도 urlpattern을 붙이고, 맨 아래에 두기
+    ]
+    ```
+
+    ```python
+    # view 함수 작성
+    # accounts/views.py
+
+    from django.contrib.auth import get_user_model
+    
+    def profile(request, username):
+        User = get_user_model()
+        person = User.objects.get(username = username)
+        context = {
+            'person': person,
+        }
+        return render(request, 'accounts/profile.html', context)
+    ```
+
+    ```HTML
+    <!-- accounts/profile.html -->
+
+    <h1>{{ person.username }}님의 프로필 페이지</h1>
+
+    <!-- article.user가 User model을 외래 키로 사용하고 있기 때문에 article > user 역참조 관계 -->
+    <!-- N:1 relationship -->
+    <h2>{{ person.username }}이 작성한 게시글</h2>
+    {% for article in person.article_set.all %}
+        <div>{{ article.title }}</div>
+    {% endfor %}
+
+    <!-- N:1 relationship -->
+    <h2>{{ person.username }}이 작성한 댓글</h2>
+    {% for comment in person.comment_set.all %}
+        <div>{{ comment.content }}</div>
+    {% endfor %}
+
+    <!-- M:N relationship -->
+    <h2>{{ person.username }}이 좋아요한 게시글</h2>
+    {% for article in person.like_articles.all %}
+        <div>{{ article.title }}</div>
+    {% endfor %}
+    ```
+
+    ```HTML
+    <!-- articles/index.html -->
+
+    <!-- 로그인한 사용자의 프로필 페이지로 이동할 수 있는 링크 작성 -->
+    <a href="{% url 'accounts:profile' user.username %}">내 프로필</a>
+
+    <!-- 게시글 작성자의 프로필 페이지로 이동할 수 있는 링크 작성 -->
+    {% for article in articles %}
+        <p>
+        작성자: <a href="{% url 'accounts:profile' article.user.username %}">{{ article.user }}</a>
+        </p>
+        ...
+    ```
+
+### 2. 팔로우 기능 구현
+
+* User (M) - User (N)
+
+    * 0명 이상의 회원은 0명 이상의 회원과 관련
+
+    * 회원은 0명 이상의 팔로워를 가질 수 있고, 0명 이상의 다른 회원들을 팔로잉할 수 있음
+
+* ManyToManyField 작성
+
+    ```python
+    # model 작성
+    # accounts/models.py
+
+    class User(AbstractUser):
+        followings = models.ManyToManyField('self', symmetrical = False, related_name = 'followers')
+
+        # 참조 : 내가 팔로우하는 사람들 (followings)
+
+        # 역참조 : 상대방 입장에서 나는 팔로워 중 한 명 (followers)
+
+        # 바뀌어도 상관없으나 관계 조회 시 생각하기 편한 방향으로 정한 것
+
+        # symmetrlcai = False : 설정하지 않으면, N > M으로 팔로워 관계를 설정하면 M > N 관계도 자동으로 설정됨
+
+        # user1.followings.all()
+
+        # user1.user_set.all() → user1.followers.all()
+    ```
+
+    * ManyToManyField의 특징
+
+        * **새로운 field를 생성하는 것이 아닌**, 중개 테이블을 생성함
+
+    * Table 생성
+
+        ![image](image/023.PNG)
+
+        * from → to : 참조 관계
+
+        * to → from : 역참조 관계
+
+    ```python
+    # url 작성
+    # accounts/urls.py
+
+    urlpatterns = [
+        ...
+        path('<int:user_pk>/follow/', views.follow, name='follow'),
+    ]
+    ```
+
+    ```python
+    # view 함수 작성
+    # accounts/views.py
+
+    @login_required
+    def follow(request, user_pk):
+        User = get_user_model()
+        person = User.objects.get(pk = user_pk)
+
+        # 자기 자신을 팔로우할 수 없도록
+        if person != request.user:
+            if request.user in person.followers.all():
+                person.followers.remove(request.user)
+            else:
+                person.followers.add(request.user)
+
+        return redirect('accounts:profile', person.username)
+
+    # @login_required
+    # def follow(request, user_pk):
+    #     me = request.user
+    #     you = get_user_model().objects.get(pk = user_pk)
+
+    #     # 요청하는 사람이 상대방의 followers 목록에 있는지 없는지
+    #     if me in you.followers.all():
+    #         you.followers.remove(me)
+    #         # me.followings.remove(you)
+    #     else:
+    #         you.followers.add(me)
+    #         # me.followings.add(you)
+        
+    #     return redirect('accounts:profile', you.username)
+    ```
+
+    ```HTML
+    <!-- 프로필 유저의 팔로잉, 팔로워 수 & 팔로우 / 언팔로우 버튼 작성 -->
+    <div>
+        팔로잉 : {{ person.followings.all|length}} / 팔로워 : {{ person.followers.all|length }}
+    </div>
+
+    {% if request.user != person %}
+        <div>
+            <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+                {% csrf_token %}
+                {% if request.user in person.followers.all %}
+                    <input type="submit" value="언팔로우">
+                {% else %}
+                    <input type="submit" value="팔로우">
+                {% endif %}
+            </form>
+            </div>
+    {% endif %}
+    ```
+
+## 4. Fixtures
+
+### 1. Fixtures
+
+* Fixtures : Django가 DB로 가져오는 방법을 알고 있는 데이터 모음
+
+    * 데이터는 DB 구조에 맞추어 작성되어 있음
+
+* Fixtures의 사용 목적 : 초기 데이터 제공
+
+    ```{:.pseudocode}
+    # 초기 데이터의 필요성
+
+    * 협업하는 유저 A, B가 있다고 생각해 보기
+    
+        1. A가 먼저 프로젝트 작업 후 원격 저장소에 push 진행
+        
+            * gitignore로 인해 DB는 업로드하지 않기 때문에 A가 생성한 데이터도 업로드X
+
+        2. B가 원격 저장소에서 A가 push한 프로젝트를 pull / clone
+
+            * 결과적으로 B는 DB가 없는 프로젝트를 받게 됨
+
+    * 이처럼 프로젝트의 앱을 처음 설정할 때 동일하게 준비된 데이터로 DB를 미리 채우는 것이 필요한 순간이 있음
+
+    * Django는 fixtures를 사용해 앱에 초기 데이터 (initial data)를 제공
+    ```
+
+### 2. Fixtures 활용
+
+* fixtures 관련 명령어
+
+    * dumpdata : 생성 (DB의 모든 데이터 추출)
+
+        ```s
+        # 작성 예시
+
+        $ python manage.py dumpdata [app_name[.ModelName] [app_name[.ModelName] ...]] > filename.json
+
+        $ python manage.py dumpdata --indent 4 articles.article > articles.json
+        $ python manage.py dumpdata --indent 4 accounts.user > users.json
+        $ python manage.py dumpdata --indent 4 articles.comment > comments.json
+        ```
+
+    * loaddata : 로드 (Fixtures 데이터를 DB로 불러오기)
+
+        * Fixtures 파일 기본 경로 : app_name/fixtures/
+
+            * Django는 설치된 모든 app의 directory에서 fixtures 폴더 이후의 경로로 fixtures 파일을 찾아 load
+
+        ```{:.pseudocode}
+        # 해당 위치로 fixture 파일 이동
+        
+        articles/
+            fixtures/
+                articles.json
+                users.json
+                comments.json
+        ```
+
+        * migrate 후 (DB가 있어야 하기 때문) load 진행
+
+        ```s
+        $ python manage.py loaddata articles.json users.json comments.json
+        ```
+
+### 3. loaddata 순서 주의사항
+
+* 만약 loaddata를 한번에 실행하지 않고 별도로 실행한다면, **모델 관계에 따라** load 순서가 중요할 수 있음
+
+    * comment는 article에 대한 key 및 user에 대한 key가 필요
+
+    * article은 user에 대한 key가 필요
+
+* 즉, 현재 모델 관계에서는 user → article → comment 순으로 data를 load해야 오류가 발생하지 않음
+
+    ```s
+    $ python manage.py loaddata users.json
+    $ python manage.py loaddata articles.json
+    $ python manage.py loaddata comments.json
+    ```
+
+## 5. Improve Query - Query 개선하기
+
+### 1. Improve Query
+
+* Query 개선하기 - 같은 결과를 얻기 위해 DB 측에 보내는 Query 개수를 점차 줄여 조회하기
+
+* 사전 준비
+
+    * fixtures data - 게시글 10개 / 댓글 500개 / 유저 5개
+
+    * 모델 관계
+
+        * N:1 - Article:User / Comment:Article / Comment:Article
+
+        * N:M - Article:User
+
+    ```s
+    $ python manage.py migrate
+    $ python manage.py loaddata users.json articles.json comments.json
+
+    Installed 115 object(s) from 3 fixture(s)
+    ```
+
+* 문제 상황 1
+
+    ![image](image/024.PNG)
+
+    ![image](image/025.PNG)
+    
+    * 127.0.0.1:8000/articles/index-1/ page를 load하기 위해 DB에 12번 Query를 전달함을 보여줌
+
+    * 게시글 각각의 댓글 수를 load하기 위해 비슷한 요청을 계속 보냄 (→ 10 similar)
+
+    ```HTML
+    <h1>Articles</h1>
+    {% for article in articles %}
+        <p>제목 : {{ article.title }}</p>
+
+        <!-- 문제 원인 : 각 게시글마다 댓글 개수를 반복 평가 -->
+        <!-- 댓글 개수 역참조를 위해 10번 반복하는 부분 -->
+        <p>댓글개수 : {{ article.comment_set.count }}</p>
+        {% comment %} <p>댓글개수 : {{ article.comment__count }}</p> {% endcomment %}
+        <hr>
+    {% endfor %}
+    ```        
+    
+    * 게시글 각각의 댓글 수를 한번에 잘 가져오는 방법? → annotate
+
+* 문제 상황 2
+
+    ![image](image/027.PNG)
+
+    ```HTML
+    <!-- articles/index_2.html -->
+
+    {% for article in articles %}
+
+    <!-- 문제 원인 : 각 게시글마다 작성한 유저명까지 반복 평가 -->
+        <h3>작성자 : {{ article.user.username }}</h3>
+        <p>제목 : {{ article.title }}</p>
+        <hr>
+    {% endfor %}
+    ```
+
+    * 게시글 작성자까지 한번에 가져오는 방법? (Article model의 user attribute 참조) → select_related
+
+* 문제 상황 3
+
+    ![image](image/028.PNG)
+
+    ```HTML
+    <!-- articles/index_3.html -->
+
+    {% for article in articles %}
+        <p>제목 : {{ article.title }}</p>
+        <p>댓글 목록</p>
+
+        <!-- 문제 원인 : 각 게시글 출력 후 각 게시글 댓글 목록까지 개별적으로 모두 평가 -->
+        {% for comment in article.comment_set.all %}
+            <p>{{ comment.content }}</p>
+        {% endfor %}
+        <hr>
+    {% endfor %}
+    ```
+
+    * 각 게시글 댓글까지 모두 가져오는 방법? (Article model을 외래 키로 설정한 Comment model을 역참조하여 가져오기) → prefetch_related
+
+* 문제 상황 4
+
+    ![image](image/029.PNG)
+
+    * "111 queries including 110 similar and 100 duplicates"
+
+    ```HTML
+    <!-- articles/index_4.html -->
+
+    <!-- "게시글 + 각 게시글의 댓글 목록 + 댓글의 작성자"를 단계적으로 평가 -->
+    {% for article in articles %}
+        <p>제목 : {{ article.title }}</p>
+        <p>댓글 목록</p>
+        {% for comment in article.comment_set.all %}
+            <p>{{ comment.user.username }} : {{ comment.content }}</p>
+        {% endfor %}
+        <hr>
+    {% endfor %}
+    ```
+
+    * 복합적으로 문제 해결 과정이 필요 → select_related & prefetch_related
+
+### 2. annotate
+
+* SQL의 GROUP BY를 사용
+
+* 문제 해결 : 게시글을 조회하면서 댓글 개수까지 한번에 조회해서 가져오기
+
+    * SQL의 관점에서, 기존 table에 'comment' field를 붙인 table을 활용하겠다!
+
+        ```python
+        # articles/views.py
+
+        def index_1(request):
+            articles = Article.objects.annotate(Count('comment')).order_by('-pk')
+            context = {
+                'articles': articles,
+            }
+            return render(request, 'articles/index_1.html', context)
+        ```
+
+        ```HTML
+        <!-- articles/index_1.html -->
+
+        {% comment %} <p>댓글개수 : {{ article.comment_set.count }}</p> {% endcomment %}
+        <p>댓글개수 : {{ article.comment__count }}</p>
+        ```
+
+        ![image](image/026.PNG)
+
+### 3. select_related
+
+* SQL의 INNER JOIN을 활용
+
+    * 1:1 또는 N:1 **참조 관계**에서 사용
+
+* 문제 해결 : 게시글을 조회하면서 유저 정보까지 한번에 조회해서 가져오기
+
+    ```python
+    # articles/views.py
+
+    def index_2(request):
+        articles = Article.objects.select_related('user').order_by('-pk')
+        context = {
+            'articles': articles,
+        }
+        return render(request, 'articles/index_2.html', context)
+    ```
+
+### 4. prefetch_related
+
+* SQL이 아닌 Python을 사용한 JOIN 진행
+
+    * M:N 또는 N:1 **역참조 관계**에서 사용
+
+    ```python
+    # articles/views.py
+
+    def index_3(request):
+        articles = Article.objects.prefetch_related('comment_set').order_by('-pk')
+        context = {
+            'articles': articles,
+        }
+        return render(request, 'articles/index_3.html', context)
+    ```
+
+### 5. select_related & prefetch_related
+
+* "게시글" + "각 게시글의 댓글 목록" + "댓글 작성자"를 한번에 조회
+
+    ```python
+    # articles/views.py
+
+    def index_4(request):
+        articles = Article.objects.prefetch_related(
+            Prefetch('comment_set', queryset = Comment.objects.select_related('user'))
+        ).order_by('-pk')
+        ...
+    ```
+
+
 ## 0. 참고
 
 * 중개 테이블 필드 생성 이름 규칙 : appname_class_fieldname
+
+* .exists()
+
+    * QuerySet 안에 결과가 포함되어 있으면 True를 반환, 그렇지 않으면 False 반환
+
+    * 검색에 사용 → in 연산자 대신
+
+    * 큰 QuerySet에 있는 특정 객체 검색에 유용 → 큰 규모의 QuerySet에서 in 연산자 대신 사용할 경우보다 속도 측면에서 좋음
+
+        ```python
+        # accounts/views.py
+
+        @login_required
+        def likes(request, article_pk):
+            article = Article.objects.get(pk = article_pk)
+
+            # if request.user in article.like_users.all():
+            if article.like_users.filter(pk = request.user.pk).exists():
+                # article.like_users.remove(request.user)
+                user.like_articles.remove(article)
+            else:
+                # article.like_users.add(request.user)
+                user.like_article.add(article)
+            return redirect('articles:index')
+        ```
+
+* 모든 모델을 한번에 dump하기
+
+    ```s
+    # 3개의 모델을 하나의 json 파일로
+    $ python manage.py dumpdata --indent 4 articles.article articles.comment accounts.user > data.json
+
+    # 모든 모델을 하나의 json 파일로
+    $ python manage.py dumpdata --indent 4 > data.json
+    ```
+
+* loaddata 시 encoding codec 관련 에러가 발생하는 경우
+
+    * 2가지 방법 중 택 1
+
+        1. dumpdata 시 추가 옵션 작성
+
+            ```s
+            $ python -Xutf8 manage.py dumpdata ...
+            ```
+
+        2. 메모장 활용
+
+            * 메모장으로 json 파일 열기 → '다른 이름으로 저장' → 인코딩을 UTF8로 선택 후 저장
+
+* Fixtures 파일을 직접 만들지 말 것 → 반드시 dumpdata 명령어를 사용해 생성
+
+* 섣부른 최적화는 악의 근원
+
+    * "작은 효율성에 대해서는, 말하자면 97% 정도에 대해서는, 잊어버려라. 섣부른 최적화는 모든 악의 근원이다."
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
