@@ -797,7 +797,7 @@ print(MyClass.static_method())  # static method
         | EOF | End of File |
         | |
 
-* 예외 (Excention)
+* 예외 (Exception)
 
     * 프로그램 실행 중 감지되는 에러
 
