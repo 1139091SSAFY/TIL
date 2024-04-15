@@ -1,6 +1,6 @@
 # DataBase - REST API
 
-<div style="text-align: right"> 24. 04. 11. ~ </div>
+<div style="text-align: right"> 24. 04. 11. ~ 24. 04. 15. </div>
 
 ## 1. API
 
@@ -385,6 +385,340 @@
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     ```
 
+## 3. DRF with N:1 Relation
+
+* URL 및 HTTP request method 구성
+
+    | URL | GET | POST | PUT | DELETE |
+    | :---: | :---: | :---: | :---: | :---: |
+    | comments/ | 댓글 목록 조회 | | | |
+    | comments/1/ | 단일 댓글 조회 | | 단일 댓글 수정 | 단일 댓글 삭제 |
+    | articles/1/comments/ | | 댓글 생성 | | |
+    | |
+
+### 1. GET
+
+* 전체 댓글 목록 조회
+
+    ```python
+    # 댓글 목록 조회를 위한 CommentSerializer 정의
+    # articles/serializers.py
+
+    from .models import Article, Comment
+
+    class CommentSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Comment
+            fields = '__all__'
+    ```
+
+    ```python
+    # url 작성
+    # articles/urls.py
+
+    urlpatterns = [
+        ...,
+        path('comments/', views.comment_list),
+    ]
+    ```
+
+    ```python
+    # view 함수 작성
+    # articles/views.py
+
+    from .models import Article, Comment
+    from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer
+
+    @api_view(['GET'])
+    def comment_list(request):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(comments, many = True)
+        return Response(serializer.data)
+    ```
+
+* 단일 댓글 조회
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...,
+        path('comments/<int:comment_pk>/', views.comment_detail),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    @api_view(['GET'])
+    def comment_detail(request, comment_pk):
+        comment = Comment.objects.get(pk = comment_pk)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data)
+    ```
+
+### 2. POST
+
+* 댓글 생성은 게시글 생성과 달리, 게시글의 정보도 같이 필요하다.
+
+* 단일 댓글 생성을 위한 url 및 view 함수 작성
+
+    ```python
+    # articles/urls.py
+
+    urlpatterns = [
+        ...,
+        path('articles/<int:article_pk>/comments/', views.comment_create),
+    ]
+    ```
+
+    ```python
+    # articles/views.py
+
+    @api_view(['POST'])
+    def comment_create(request, article_pk):
+        article = Article.objects.get(pk = article_pk)
+
+        # CommentForm을 사용할 때는 첫 번째 인자로 data를 받기 때문에 바로 request.data를 사용하면 되었으나,
+        # CommentSerializer의 경우 주의
+        serializer = CommentSerializer(data = request.data)
+        if serializer.is_valid(raise_exception = True):
+
+            # serializer instance의 save() method는 특정 Serializer instance를 저장하는 과정에서 추가 데이터를 받을 수 있음
+            # article, content field가 모두 필요한데, POSTMAN을 통해 content만 입력하면 400 error 발생
+            # serializer.save()
+            serializer.save(article = article)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+    ```
+
+    * article을 입력해 줘도 계속 상태코드 400 응답 확인
+
+        * **CommentSerializer**에서 외래 키에 해당하는 **article** field 또한 사용자로부터 입력받도록 설정되어 있기 때문에, 서버 측에서는 누락되었다고 판단한 것
+
+        * is_valid()문을 통과하지 못함 → 유효성 검사 목록에서 제외 필요
+
+* **article** field를 *읽기 전용 field*로 설정하기
+
+    * 데이터를 전송받은 시점에서 **유효성 검사를 제외**시키고, **데이터 조회 시에는 출력**하는 필드
+
+        ```python
+        # articles/serializers.py
+
+        class CommentSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Comment
+                fields = '__all__'
+                read_only_fields = ('articles', )
+        ```
+
+### 3. DELETE & PUT
+
+* 단일 댓글 삭제 및 수정을 위한 view 함수 작성
+
+    ```python
+    # articles/views.py
+    @api_view(['GET', 'DELETE', 'PUT'])
+    def comment_detail(request, comment_pk):
+        comment = Comment.objects.get(pk = comment_pk)
+        if request.method == 'GET':
+            serializer = CommentSerializer(comment)
+            return Response(serializer.data)
+
+        elif request.method == 'DELETE':
+            comment.delete()
+            return Response(status = status.HTTP_204_NO_CONTENT)
+    
+        elif request.method == 'PUT':
+            serializer = CommentSerializer(comment, data = request.data)
+            if serializer.is_valid(raise_exception = True):
+                serializer.save()
+                return Response(serializer.data)
+    ```
+
+### 4. 응답 데이터 재구성
+
+* 댓글 조회 시 게시글 번호만 제공해주는 것이 아닌 *'게시글의 제목'까지 제공*하기
+
+* 필요한 데이터를 만들기 위한 Serializer는 내부에서 추가 선언이 가능함
+
+    ![image](image/036.PNG)
+
+    ```python
+    # articles/serializers.py
+
+    class CommentSerializer(serializers.ModelSerializer):
+        # 외래 키에 대한 결과물을 만들어주는 Serializer를 CommentSerializer 안쪽에서 선언
+        class ArticleTitleSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Article
+                fields = ('title',)
+        
+        # CommentSerializer가 갖고 있는 article field를 ArticleTitleSerializer를 통해 만든 결과물로 덮어쓰기
+
+        # Field에 대한 값을 custom하는 순간 read_only_fields가 작동하지 않음 → serializing할 때 옵션을 넣어줘야 함
+        article = ArticleTitleSerializer(read_only = True)
+
+        class Meta:
+            model = Comment
+            fields = '__all__'
+            # read_only_fields = ('articles',)
+    ```
+
+    ![image](image/037.PNG)
+
+## 4. 역참조 시 데이터 구성
+
+* Article → Comment 간 역참조 관계를 활용한 JSON 데이터 재구성
+
+    * 단일 게시글 조회 시 해당 게시글에 작성된 댓글 목록도 함께 붙여 응답
+
+    * 단일 게시글 조회 시 해당 게시글에 작성된 댓글 개수도 함께 붙여 응답
+
+### 1. 단일 게시글 & 댓글 목록
+
+* Nested Relationships (역참조 매니저 활용)
+
+    * model 관계 상으로 참조하는 대상은 참조되는 대상의 표현에 포함되거나 중첩될 수 있음
+
+    * 이러한 중첩된 관계는 serializers를 field로 사용해 표현 가능
+
+    ```python
+    # articles/serializers.py
+
+    class ArticleSerializer(serializers.ModelSerializer):
+
+        # 기존에 만들어놓은 CommentSerializer을 사용해도 됨
+        class CommentDetailSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Comment
+                fields = ('id', 'content', )
+
+        # 1 → N 참조
+        # 단일 대상이 아니기 때문에 many = True 옵션을 넣어줘야 함
+        # serializer에서도 역참조의 이름 규칙은 변하지 않음 (comment_abcd 등으로 바꿀 수 없음)
+        # 바꾸려면 model에서 related_name 옵션을 지정해서 바꿔줘야 함
+        comment_set = CommentDetailSerializer(many = True, read_only = True)
+
+        class Meta:
+            model = Article
+            fields = '__all__'
+    ```
+
+### 2. 단일 게시글 & 댓글 개수
+
+* 댓글 개수 → 앞선 단순 역참조와 달리, 개수 계산을 하여 새로운 field를 생성해야 하는 과정
+
+* 댓글 개수에 해당하는 새로운 field 생성
+
+    ```python
+    # articles/serializers.py
+
+    class ArticleSerializer(serializers.ModelSerializer):
+        class CommentDetailSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Comment
+                fields = ('id', 'content', )
+
+        comment_set = CommentDetailSerializer(many = True, read_only = True)
+        # read_only 인자를 override하는 field에 작성해야 함 (read_only_fields에 입력하면 동작하지 않음)
+
+        # 새로이 만드는 필드이기 때문에 이름 규칙이 없음
+        # source 인자 → 문자열로 작성하는데, article.comment_set 에서 instance를 빼고 입력
+        comment_count = serializers.IntegerField(source = 'comment_set.count', read_only = True)
+        # read_only 인자를 생성하는 field에 작성해야 함 (read_only_fields에 입력하면 동작하지 않음)
+
+        class Meta:
+            model = Article
+            fields = '__all__'
+    ```
+
+    * *source* arguments
+
+        * field를 채우는 데 사용할 속성의 이름
+
+        * 점 표기법 (dotted notation)을 사용해 속성을 탐색할 수 있음
+
+### 3. 읽기 전용 field 지정 issue (중요)
+
+    * 특정 field를 override 혹은 추가한 경우 read_only_fields는 동작하지 않음
+
+    * 이런 경우, override 혹은 새로운 field에 read_only keyword 인자로 작성해야 함
+
+## 5. API 문서화
+
+### 1. 개요
+
+* OAS, OpenAPI Specification
+
+    * RESTful API를 설명하고 시각화하는 표준화된 방법
+
+    * API에 대한 세부사항을 기술할 수 있는 공식 표준 (가이드)
+
+    * Swagger, Redoc 등 - OAS 기반 API에 대한 문서를 생성하는 데 도움을 주는 오픈소스 프레임워크
+
+* drf-spectacular 라이브러리
+
+    * DRF를 위한 OpenAPI 3.0 구조 생성을 도와주는 라이브러리
+
+    ```s
+    $ pip install drf-spectacular
+    ```
+
+    ```python
+    # settings.py
+
+    # 등록
+    INSTALLED_APPS = [
+        ...,
+        'drf_spectacular',
+        ...,
+    ]
+
+    # 관련 설정 코드 입력 (OpenAPI 구조 자동 생성 코드)
+    REST_FRAMEWORK = {
+        # YOUR SETTINGS
+        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    }
+    ```
+
+    ```python
+    # drf/urls.py
+
+    # swagger, redoc 페이지 제공을 위한 url 작성
+    from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+    urlpatterns = [
+        ...,
+        path('api/schema/', SpectacularApiView.as_view(), name='schema'),
+        path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name = 'schema'), name = 'swagger-ui'),
+        path('api/schema/redoc/', SpectacularRedocView.as_view(url_name = 'schema'), name = 'redoc'),
+    ]
+    ```
+
+    ```python
+    # 커스텀하기
+    # settings.py
+
+    SPECTACULAR_SETTINGS = {
+        'TITLE': '내 API 서비스',
+        'DESCRIPTION': 'Django 마지막 서비스',
+        'VERSION': '1.0.0',
+        'SERVE_INCLUDE_SCHEMA': False,
+    }
+    ```
+
+### 2. "설계 우선" 접근법
+
+* OAS의 핵심 이점
+
+* API를 **먼저 설계하고 명세 작성 후**, 이를 기반으로 코드를 구현하는 방식
+
+* API의 일관성을 유지하고, API 사용자는 더 쉽게 API를 이해 / 사용할 수 있음
+
+* OAS를 사용하면 API가 어떻게 작동하는지를 시각적으로 보여주는 문서를 생성할 수 있으며, 이는 API를 이해하고 테스트하는 데 매우 유용
+
+* 이런 목적으로 사용되는 도구가 Swagger-UI 또는 ReDoc
+
 ## 0. 참고
 
 * raise_exception
@@ -410,14 +744,87 @@
                 # return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         ```
 
-* get_object_or_404, get_list_or_404
+* Django shortcuts functions - render(), redirect(), **get_object_or_404**, **get_list_or_404**
+
+    * get_object_or_404()
+
+        * model manager objects에서 get()을 호출하지만, 해당 객체가 없을 땐 기존 DoesNotExist 예외 대신 **Http404를 raise**함
+
+            * 클라이언트가 없는 데이터를 조회할 때, 서버 입장에서 나쁜 요청이 아니라서 서버가 잘 찾아보았지만 자료가 없는 것
+
+            * 이 상황에서 사용자는 404 Error를 받아야 하지만 500 Internal Server Error가 발생함
+
+                * view 함수에서, 조회를 했을 때 사용한 .get 함수에서 발생한 예외 (없는 자료)로 인해 더 아래 구문을 실행하지 않고 바로 500 Error를 발생시키기 때문
+
+            * try ~ except 구문을 사용하는 경우
+
+            ```python
+            @api_view(['GET', 'DELETE', 'PUT'])
+            def article_detail(request, article_pk):
+                try:
+                    article = Article.objects.get(pk = article_pk)
+                except DoesNotExist:
+                    return ...
+
+                if request.method == 'GET':
+                    ...
+            ```
+
+            * 이를 get_object_or_404 함수를 사용하여 간단하게 표현할 수 있음
+
+            ```python
+            # articles/views.py
+
+            from django.shortcuts import get_object_or_404
+
+            article = Article.objects.get(pk = article_pk)
+            comment = Comment.objects.get(pk = comment_pk)
+
+            # 위 코드를 모두 다음과 같이 변경
+            article = get_object_or_404(Article, pk = article_pk)
+            comment = get_object_or_404(Comment, pk = comment_pk)
+            ```
+
+    * get_list_or_404()
+
+        * model manger objects에서 filter()의 결과를 반홯나고, 해당 객체 *목록*이 없을 땐 **Http404를 raise**함
+
+            ```python
+            # articles/views.py
+
+            from django.shortcuts import get_list_or_404
+
+            articles = Article.objects.all()
+            comments = Comment.objects.all()
+
+            # 위 코드를 모두 다음과 같이 변경
+            articles = get_list_or_404(Article)
+            comments = get_list_or_404(Comment)
+            ```
+
+    * 왜 사용해야 할까?
+
+        * 클라이언트에게 "서버에 오류가 발생하여 요청을 수행할 수 없다(500)" 라는, *원인이 정확하지 않은 에러를 제공하기보다는*, 적절한 예외처리를 통해 클라이언트에게 **보다 정확한 에러 현황을 전달하는 것**도 매우 중요한 개발 요소 중 하나이기 때문
+
+* django-seed, psycopg2
+
+    * django-seed : DB에 랜덤하게 자료를 채워넣어 주는 프로그램
+
+    ```s
+    $ pip install django-seed
+    $ pip install psycopg2
+    ```
 
     ```python
-    from django.shortcuts import get_object_or_404, get_list_or_404
+    # settings.py
 
-    @api_view(['GET', ])
-    def book_detail(request, book_pk):
-        # book = Book.objects.get(pk = book_pk)
-        book = get_object_or_404(pk = book_pk)
-        ...
+    INSTALLED_APPS = [
+        ...,
+        'django_seed',
+    ]
+    ```
+
+    ```s
+    # articles app에 Article, Comment model 2개가 있는데, 이를 이용해 랜덤하게 10개의 데이터를 만들어 DB에 저장
+    $ python manage.py seed --number=10 articles
     ```
