@@ -372,9 +372,7 @@
 
     * DOM method를 사용해 선택한 Node의 목록
 
-    * 배열과 유사한 구조를 가짐
-
-        * Index로만 각 항목에 접근 가능
+    * 배열과 유사한 구조를 가짐 - Index로만 각 항목에 접근 가능
 
     * JavaScript의 배열 method 사용 가능
 
