@@ -828,3 +828,12 @@
     # articles app에 Article, Comment model 2개가 있는데, 이를 이용해 랜덤하게 10개의 데이터를 만들어 DB에 저장
     $ python manage.py seed --number=10 articles
     ```
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$']]},
+    messageStyle: "none",
+    "HTML-CSS": { availableFonts: "TeX", preferredFont: "TeX" },
+  });
+</script>
