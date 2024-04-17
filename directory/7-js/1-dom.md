@@ -1,4 +1,4 @@
-# JavaScript
+# JavaScript - DOM
 
 <div style="text-align: right"> 24. 04. 16. </div>
 
