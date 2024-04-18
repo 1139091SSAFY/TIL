@@ -183,7 +183,7 @@
     | undefined | 항상 false | X |
     | null | 항상 false | X |
     | Number | 0, -0, NaN | 나머지 모든 경우 |
-    | String | '' (빈 문자열) | 나머지 모든 경우 |
+    | String | \'\' (빈 문자열) | 나머지 모든 경우 |
     | |
 
     ```JS
