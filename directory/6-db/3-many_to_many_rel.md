@@ -666,7 +666,7 @@ doctors.patient_set.all()
     ```HTML
     <!-- 프로필 유저의 팔로잉, 팔로워 수 & 팔로우 / 언팔로우 버튼 작성 -->
     <div>
-        팔로잉 : {{ person.followings.all|length}} / 팔로워 : {{ person.followers.all|length }}
+        팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followers.all|length }}
     </div>
 
     {% if request.user != person %}
