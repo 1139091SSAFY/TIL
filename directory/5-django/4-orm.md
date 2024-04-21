@@ -81,7 +81,7 @@
 
         1. 
 
-        ```bash
+        ```s
         # 1-1
         >>> article = Article()      # Article(class) 로부터 article(instance) 생성
         >>> article
@@ -114,7 +114,7 @@
 
         2. 
 
-        ```bash
+        ```s
         # save Method를 호출해야 비로소 DB에 데이터가 저장됨
         # 테이블에 한 줄(행, 레코드)이 쓰여진 것
 
@@ -133,7 +133,7 @@
         ```
 
         3. 
-        ```bash
+        ```s
         # QuerySet API 중 create() Method 활용
         # 위 2가지 방법과 달리 바로 저장 이후 바로 생성된 데이터가 반환
         
@@ -159,14 +159,14 @@
 
     * all() : *전체 데이터* 조회, QuerySet 반환
 
-    ```bash
+    ```s
     >>> Article.objects.all()
     <QuerySet [<Article: Article object (1)>, <Article: Article object (2)>, <Article: Article object (3)>]>
     ```
 
     * filter() : *특정 조건 데이터* 조회, QuerySet 반환
 
-    ```bash
+    ```s
     >>> Article.objects.filter(content = 'django!')
     <QuerySet [<Article: Article object (1)>, <Article: Article object (2)>, <Article: Article object (3)>]>
     >>> Article.objects.filter(title = 'abc')
@@ -177,7 +177,7 @@
 
     * get() : 단일 데이터 조회 → 조건이 들어갈 수밖에 없음
 
-    ```bash
+    ```s
     # 반환된 데이터를 변수에 넣어 활용할 수 있음!!!
     >>> Article.objects.get(pk = 1)
     <Article: Article object (1)>
@@ -200,7 +200,7 @@
 
     * 인스턴스 변수 변경 후 save Method 호출
 
-    ```bash
+    ```s
     # 수정할 인스턴스 조회
     >>> article = Article.objects.get(pk = 1)
 
@@ -221,7 +221,7 @@
 
     * 삭제하려는 데이터 조회 후 deleta Method 호출
 
-    ```bash
+    ```s
     # 삭제할 인스턴스 조회
     >>> article = Article.objects.get(pk = 1)
 
@@ -246,7 +246,7 @@
 
     * QuerySet Method filter(), exclude() 및 get()에 대한 keyword 인자로 지정
 
-    ```bash
+    ```s
     # Field lookups 예시
 
     # "content column에 'dja'가 포함된 모든 데이터 조회"
@@ -289,7 +289,7 @@
         return render(request, 'articles/index.html', context)
     ```
 
-    ```html
+    ```HTML
     <!-- articles/index.html -->
 
     <h1>Articles</h1>
@@ -324,7 +324,7 @@
         return render(request, 'articles/detail.html', context)
     ```
 
-    ```html
+    ```HTML
     <!-- articles/detail.html -->
 
     <h2>DETAIL</h2>
@@ -338,7 +338,7 @@
     <a href="{% url 'articles:index' %}">[back]</a>
     ```
 
-    ```html
+    ```HTML
     <!-- articles/index.html -->
 
     <h1>Articles</h1>
@@ -382,7 +382,7 @@
         return render(request, 'articles/new.html')
     ```
 
-    ```html
+    ```HTML
     <!-- articles/new.html -->
 
     <h1>NEW</h1>
@@ -402,14 +402,15 @@
     ```
 
     * new 페이지로 이동할 수 있는 하이퍼링크 작성
-    ```html
-    <!-- articles/index.html -->
+     
+        ```HTML
+        <!-- articles/index.html -->
 
-    <h1>Articles</h1>
-    <a href="{% url 'articles:new' %}">NEW</a>
-    <hr>
-    ...
-    ```
+        <h1>Articles</h1>
+        <a href="{% url 'articles:new' %}">NEW</a>
+        <hr>
+        ...
+        ```
 
 * create
 
@@ -422,7 +423,7 @@
     ]
     ```
 
-    ```html
+    ```HTML
     <!-- articles/create.html -->
 
     <h1>게시글이 작성되었습니다.</h1>
@@ -450,7 +451,7 @@
         return render(request, 'articles/create.html')
     ```
 
-    ```html
+    ```HTML
     <!-- articles/new.html -->
     <h1>New</h1>
     <form action="{% url 'articles:create' %}" method="GET">
@@ -478,7 +479,7 @@
 
         * ***게시글 생성 요청***이 POST로 바뀌어야 함
 
-        ```html
+        ```HTML
         <!-- articles/new.html -->
 
         <h1>NEW</h1>
@@ -528,7 +529,7 @@
 
                 * 요청 시 토큰 값도 함께 서버로 전송
 
-            ```html
+            ```HTML
             <!-- articles/new.html -->
 
             <h1>NEW</h1>
@@ -600,7 +601,7 @@
         return redirect('articles:index')   # 게시글 삭제가 잘 되면 메인 페이지로 이동
     ```
 
-    ```html
+    ```HTML
     <!-- articles/detail.html -->
 
     <body>
@@ -647,7 +648,7 @@
 
     * 수정 시 이전 데이터가 출력될 수 있도록 작성하기
 
-    ```html
+    ```HTML
     <!-- articles/edit.html -->
     <h1>EDIT</h1>
     <form action="#" method="POST">
@@ -668,7 +669,7 @@
 
     * edit 페이지로 이동하기 위한 하이퍼링크 작성
 
-    ```html
+    ```HTML
     <!-- articles/detail.html -->
 
     <body>
@@ -697,16 +698,16 @@
 
     def update(request, pk):
         article = Article.objects.get(pk = pk)
-        article.title = request.POST>get('title')
-        article.content = request.POST>get('content')
+        article.title = request.POST.get('title')
+        article.content = request.POST.get('content')
         article.save()
 
-        return redireect('articles:detail', article.pk)
+        return redirect('articles:detail', article.pk)
     ```
 
     * 작성 후 게시글 수정 테스트 - action 부분 수정
 
-    ```html
+    ```HTML
     <!-- articles/edit.html -->
     <h1>EDIT</h1>
     <form action="{% url 'articles:update' article.pk %}" method="POST">

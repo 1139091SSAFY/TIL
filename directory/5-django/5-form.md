@@ -337,7 +337,7 @@ def update(request, pk):
 
 ```html
 {{ form.non_field_errors }}
-<form action="..." method="POST>
+<form action="..." method="POST">
     {{% csrf_token %}}
     <div>
         {{ form.title.errors }}
