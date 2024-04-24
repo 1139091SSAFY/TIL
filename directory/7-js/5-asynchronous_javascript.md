@@ -141,7 +141,7 @@
 
 ## 2. Ajax
 
-### 1. Ajax : Asynchronous JavaScipr and XML
+### 1. Ajax : Asynchronous JavaScript and XML
 
 * Ajax
 
@@ -205,7 +205,7 @@
 
     * 이벤트가 발생할 때마다 호출되는 함수 (콜백 함수)를 제공하는 것
 
-    * HTTP 요청은 응답이 올 때까지의 시간이 걸릴 수 있는 자겁이라 비동기이며, 이벤트 핸들러를 XHR 객체에 연결해 요청의 진행 상태 및 최종 완료에 대한 응답을 받음
+    * HTTP 요청은 응답이 올 때까지의 시간이 걸릴 수 있는 작업이라 비동기이며, 이벤트 핸들러를 XHR 객체에 연결해 요청의 진행 상태 및 최종 완료에 대한 응답을 받음
 
 ## 3. Axios
 
@@ -246,8 +246,6 @@
             ![image](image/025.PNG)
 
             ```JS
-            const URL = 'https://api.thecatapi.com/v1/images/search'
-
             // 1. 풀어서 쓰는 표기
             // python django에서, request.get(URL)과 같은 코드
             const promiseObj = axios({
