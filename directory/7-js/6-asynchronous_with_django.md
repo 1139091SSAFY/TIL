@@ -287,7 +287,7 @@
           
           // 3. axios 작성
           axios({
-            meethod: 'post',
+            method: 'post',
             url: `/articles/${articleId}/likes/`,
             headers: {
                     'X-CSRFToken': csrftoken,
@@ -331,7 +331,7 @@
         // articles/index.html
 
         axios({
-          meethod: 'post',
+          method: 'post',
           url: `/articles/${articleId}/likes/`,
           headers: {
                   'X-CSRFToken': csrftoken,
