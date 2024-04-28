@@ -205,7 +205,7 @@
         const arrow3 = name => { return `hello, ${name}`}
 
         // 3. 함수 본문이 return을 포함한 표현식 1개일 경우에 {} & return 삭제 가능
-        const arrow4 = name => return `hello, ${name}`
+        const arrow4 = name => `hello, ${name}`
         ```
 
 * 화살표 함수 심화
