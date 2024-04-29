@@ -4,7 +4,6 @@
 
 ## 1. Frontend Development
 
-
 ### 1. Client-side frameworks
 
 * Frontend Development : 웹사이트와 웹 애플리케이션의 사용자 인터페이스(UI)와 사용자 경험(UX)을 만들고 디자인하는 것
@@ -113,7 +112,7 @@
 
     * Evan You에 의해 발표 (2014)
 
-    * 최신 버전은 "Vue 3" (2024) - [https://vuejs.org/]
+    * 최신 버전은 "Vue 3" (2024) - https://vuejs.org/
 
         * Vue 2 문서에 접속하지 않도록 주의
 
