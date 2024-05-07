@@ -260,7 +260,7 @@
 
 * 사전 준비
 
-    ```Vue
+    ```HTML
     <template>
       <h1>App.vue</h1>
     </template>
@@ -273,7 +273,7 @@
 
     * components 폴더 아래에 MyComponent.vue 생성
 
-        ```Vue
+        ```HTML
         <!-- MyComponent.vue -->
 
         <template>
@@ -294,7 +294,7 @@
 
         * "@" - "src/" 경로를 뜻하는 약어 (Django의 BASE_DIR과 비슷한 개념)
 
-        ```Vue
+        ```HTML
         <!-- App.vue -->
 
         <template>
@@ -350,7 +350,7 @@
 
     * 직접 DOM element에 접근해야 하는 경우 - ref 속성을 사용해 특정 DOM element에 직접적인 참조를 얻을 수 있음
 
-        ```Vue
+        ```HTML
         <template>
           <input ref="input">
         </template>
@@ -379,7 +379,7 @@
 
     * 규모가 있는 앱의 전체를 구축하려는 경우 권장 (Composition API + SFC)
 
-        ```Vue
+        ```HTML
         <template>
           <button @click="increment">{{ count }}</button>
         </template>
@@ -407,7 +407,7 @@
 
     * 빌드 도구를 사용하지 않거나 복잡성이 낮은 프로젝트에서 사용하려는 경우 (Option API)
 
-        ```Vue
+        ```HTML
         <template>
           <button @click="increment">{{ count }}</button>
         </template>
@@ -443,7 +443,7 @@
 
 * SFC의 CSS 기능 - scoped
 
-    ```Vue
+    ```HTML
     <style scoped></style>
     ```
 
@@ -461,7 +461,7 @@
 
     * 다음과 같이 App(부모) 컴포넌트에 적용한 스타일에 scoped가 작성되어 있지만, MyComponent(자식)의 최상위 요소(div)는 부모와 본인의 CSS 모두의 영향을 받기 때문에 부모 컴포넌트에 지정한 스타일이 적용됨
 
-        ```Vue
+        ```HTML
         <!-- App.vue -->
 
         <template>
@@ -475,7 +475,7 @@
         </style>
         ```
 
-        ```Vue
+        ```HTML
         <!-- MyComponent.vue -->
 
         <template>
