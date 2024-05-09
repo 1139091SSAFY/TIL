@@ -79,7 +79,7 @@
 
     * 라우팅에 관련된 정보 및 설정이 작성되는 곳
 
-    * router에 URL과 컴포넌트를 매핑
+    * router에 URL과 컴포넌트를 mapping
 
 * views
 
@@ -151,7 +151,7 @@
 
 * Dynamic Route Matching : URL의 일부를 변수로 사용해 경로를 동적으로 매칭
 
-    * 매개변수를 사용한 동적 경로 매칭 - 주어진 패턴 경로를 동일한 컴포넌트에 매핑해야 하는 경우 활용
+    * 매개변수를 사용한 동적 경로 매칭 - 주어진 패턴 경로를 동일한 컴포넌트에 mapping해야 하는 경우 활용
 
         - user/1, user/2, user/3 등 모든 사용자의 ID를 활용해 프로필 페이지 URL을 설계하는 경우
 
@@ -343,7 +343,7 @@
         </template>
         ```
         
-* 중첩된 라우팅(nester routing) 주의 : 컴포넌트 간 부모-자식 관계 관점이 아닌 URL에서의 중첩된 관계를 표현하는 관점으로 바라보기
+* 중첩된 라우팅(Nested Routing) 주의 : 컴포넌트 간 부모-자식 관계 관점이 아닌 URL에서의 중첩된 관계를 표현하는 관점으로 바라보기
 
 ### 5. Programmatic Navigation
 
@@ -390,7 +390,7 @@
 
     2. router.replace() : 현재 위치 바꾸기
     
-        * push() method와 달리 history stack에 새로운 항목을 push하지 않고 다른 URL로 이동 (=== 이동 전 URL로 뒤로 가기 불가)
+        * push() method와 달리 history stack에 새로운 항목을 push하지 않고 다른 URL로 이동 (→ 이동 전 URL로 뒤로 가기 불가)
 
             | 선언적 표현 | 프로그래밍적 표현 |
             | :---: | :---: |
@@ -557,7 +557,9 @@
 
 * In-component Guard 종류
 
-    1. onBeforeRouteLeave() : 현재 라우트에서 다른 라우트로 이동하기 전에 실행 → 사용자가 현재 페이지를 떠나는 동작에 대한 로직 처리
+    1. onBeforeRouteLeave() : 현재 라우트에서 다른 라우트로 이동하기 전에 실행
+
+        * 사용자가 현재 페이지를 떠나는 동작에 대한 로직 처리
 
         * 사용자가 UserView를 떠날 시 팝업창 출력하기
         
@@ -574,7 +576,9 @@
             })
             ```
 
-    2. onBeforeRouteUpdate() : 이미 렌더링된 컴포넌트가 같은 라우트 내에서 업데이트되기 전에 실행 → 라우트 업데이트 시 추가적인 로직을 처리
+    2. onBeforeRouteUpdate() : 이미 렌더링된 컴포넌트가 같은 라우트 내에서 업데이트되기 전에 실행
+    
+        * 라우트 업데이트 시 추가적인 로직을 처리
 
         * UserView 페이지에서 다른 id를 가진 User의 UserView 페이지 이동하기 → 같은 라우트 내에서 업데이트되는 경우 (/user/1 → /user/100)
 
