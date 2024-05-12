@@ -222,7 +222,8 @@
             <template>
               <div>
                 <h1>UserView</h1>
-                <h2>{{ $route.params.id }}번 User 페이지</h2>
+                <!-- <h2>{{ $route.params.id }}번 User 페이지</h2> -->
+                <h2>{{ userId }}번 User 페이지</h2>
               </div>
             </template>
 
@@ -304,7 +305,7 @@
         <template>
           <div>
             <RouterLink :to="{ name: 'user-profile' }">Profile</RouterLink>
-            <RouterLink :to="{ name: 'user-posts'}">Posts</RouterLink>
+            <RouterLink :to="{ name: 'user-posts' }">Posts</RouterLink>
             <h1>UserView</h1>
             <h2>{{ userId }}번 User 페이지</h2>
             <hr>
@@ -606,11 +607,11 @@
 
 * Navigation Guard 정리
 
-    | | Navigation Guard | Description |
-    | :---: | :---: | :--- |
-    | 1 | Globally<br>(전역 가드) | 애플리케이션 전역에서 동작<br>작성위치 : <span style="color: red;">index.js</span> |
-    | 2 | Per-route<br>(라우터 가드) | 특정 route에서만 동작<br>작성위치 : <span style="color: red;">index.js의 각 routes</span> |
-    | 3 | In-component<br>(컴포넌트 가드) | 특정 컴포넌트 내에서만 동작<br>작성위치 : <span style="color: red;">각 컴포넌트의 script</span> |
+    | | Navigation Guard | Examples | Description |
+    | :---: | :---: | :---: | :--- |
+    | 1 | Globally<br>(전역 가드) | useRouter().beforeEach | 애플리케이션 전역에서 동작<br>작성위치 : <span style="color: red;">index.js</span> |
+    | 2 | Per-route<br>(라우터 가드) | beforeEnter: callBackFunction | 특정 route에서만 동작<br>작성위치 : <span style="color: red;">index.js의 각 routes</span> |
+    | 3 | In-component<br>(컴포넌트 가드) | onBeforeRouteLeave(callBackFunction)<br>onBeforeRouteUpdate(callBackFunction) | 특정 컴포넌트 내에서만 동작<br>작성위치 : <span style="color: red;">각 컴포넌트의 script</span> |
     | |
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>

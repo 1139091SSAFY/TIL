@@ -309,7 +309,7 @@
 
         <script setup>
           const someCallback = function () {
-            console.log('Parent가 발신한 이벤트를 수신했어요.')
+            console.log('ParentChild가 발신한 이벤트를 수신했어요.')
           }
         </script>
         ```
@@ -429,7 +429,7 @@
 
           const updateName = function () {
             emit('updateName')
-          }s
+          }
         </script>
         ```
 

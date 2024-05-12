@@ -31,7 +31,7 @@
     2. Raw HTML
 
         ```JS
-        const rawHTML = ref('<stan style="color: red">This should be red.</span>')
+        const rawHTML = ref('<span style="color: red">This should be red.</span>')
         ```
 
         ```HTML
@@ -219,7 +219,7 @@
                         ```HTML
                         <style>
                             .active {
-                            color: crimson;
+                                color: crimson;
                             }
                         </style>
 
@@ -729,6 +729,7 @@
         <div v-for="item in items">
             {{ item.text }}
         </div>
+        ```
 
     * index(객체에서는 key)에 대한 별칭 지정 가능
 
@@ -1043,6 +1044,7 @@
     * 공통점 : 데이터의 변화를 감지하고 처리
 
         | | Computed | Watchers |
+        | :---: | :---: | :---: |
         | 동작 | 의존하는 데이터 속성의 계산된 값을 반환<br>중복된 값을 방지해 계산을 줄이고 싶기 때문 | 특정 데이터 속성의 변화를 감시하고 작업을 수행 (side-effects) |
         | 사용 목적 | 계산한 값을 캐싱하여 재사용<br>중복 계산 방지 | 데이터 변화에 따른 특정 작업 수행 |
         | 사용 예시 | 연산된 길이, 필터링된 목록 계산 등 | DOM 변경, 다른 비동기 작업 수행(**axios를 보내는 등**), 외부 API와 연동 등 |
@@ -1109,7 +1111,7 @@
                         })
                         .catch((error) => {
                             console.log('실패했다옹')
-                        })
+                    })
                 }
 
                 onMounted( () => {
@@ -1139,7 +1141,7 @@
                 const message = ref(null)
 
                 onUpdated( () => {
-                message.value = 'count가 수정됨!!'
+                    message.value = 'count가 수정됨!!'
                 })
             }
         })

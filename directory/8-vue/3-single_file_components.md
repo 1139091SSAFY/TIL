@@ -44,7 +44,7 @@
         </script>
 
         <style scoped>
-          .greetine {
+          .greeting {
             color: red;
           }
         </style>
