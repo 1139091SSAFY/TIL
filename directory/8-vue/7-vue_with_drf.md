@@ -454,6 +454,748 @@
       </script>
     ```
 
+## 4. Authentication with DRF
+
+### 1. 인증
+
+* Authentication 인증 : 수신된 요청을 해당 요청의 사용자 또는 자격 증명과 연결하는 메커니즘 → 누구인지를 확인하는 과정
+
+* Permissions 권한 : 요청에 대한 접근 허용 또는 거부 여부를 결정
+
+* 순서상 인증이 먼저 진행되며, 수신 요청을 해당 요청의 사용자 또는 해당 요청이 서명된 토큰(token)과 같은 자격 증명 자료와 연결 → 그 다음 권한 및 제한 정책은 인증이 완료된 해당 자격 증명을 사용해 요청을 허용해야 하는지 결정
+
+    * DRF에서 인증은 항상 view 함수 시작 시, 권한 및 제한 확인이 발생하기 전, 다른 코드의 진행이 허용되기 전에 실행
+
+    * 인증 자체로는 들어오는 요청을 허용하거나 거부할 수 없으며, <span style="color: red;">단순히 요청에 사용된 자격 증명만 식별</span>한다는 점에 유의
+
+* 승인되지 않은 응답 및 금지된 응답 : 인증되지 않은 요청이 권한을 거부하는 경우 해당되는 두 가지 오류 코드
+
+    1. HTTP 401 Unauthorized : 요청된 리소스에 대한 유효한 인증 자격 증명이 없기 때문에, 클라이언트 요청이 완료되지 않았음을 나타냄 (누구인지를 증명할 자료가 없음)
+
+    2. HTTP 403 Forbidden (Permission Denied) : 서버에 요청이 전달되었지만, 권한 때문에 거절됨을 의미 → 401과 다른 점은, 서버는 클라이언트가 누구인지 알고 있음
+
+### 2. 인증 체계 설정
+
+1. 전역 설정
+
+    * DEFAULT_AUTHENTICATION_CLASSES를 사용
+
+        ```py
+        # settings.py
+
+        REST_FRAMEWORK = {
+          # Authentication
+            'DEFAULT_AUTHENTICATION_CLASSES': [
+                'rest_framework.authentication.BasicAuthentication',
+                'rest_framework.authentication.TokenAuthentication',
+            ]
+        }
+        ```
+
+2. View 함수별 설정
+
+    * authentication_classes 데코레이터를 사용
+
+        ```py
+        # articles/views.py
+
+        from rest_framework.decorators import authentication_classes
+        from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+
+        @api_view(['GET', 'POST'])
+        @authentication_classes([TokenAuthentication, BasicAuthentication, ])
+        def article_list(request):
+            pass
+        ```
+
+### 3. Token 인증 설정
+
+* DRF가 제공하는 인증 체계
+
+    1. BasicAuthentication
+
+    2. <span style="color: green;">TokenAuthentication</span>
+
+        * token 기반 HTTP 인증 체계로, 기본 데스크톱 및 모바일 클라이언트와 같은 클라이언트-서버 설정에 적합
+
+        * 서버가 인증된 사용자에게 토큰을 발급하고, 사용자는 매 요청마다 발급받은 토큰을 요청과 함께 보내 인증 과정을 거침
+
+    3. SessionAuthentication
+
+    4. RemoteUserAuthentication
+
+* TokenAuthentication 적용 과정
+
+    1. 인증 클래스 설정 : 모든 view 함수가 토큰 기반 인증이 진행될 수 있도록 설정하는 것
+
+        ```py
+        # settings.py
+
+        REST_FRAMEWORK = {
+          # Authentication
+            'DEFAULT_AUTHENTICATION_CLASSES': [
+                'rest_framework.authentication.TokenAuthentication',
+            ]
+        }
+        ```
+
+    2. INSTALLED_APPS 추가
+
+        ```py
+        # settings.py
+
+        INSTALLED_APPS = [
+            ...
+            'rest_framework.authtoken',
+        ]
+        ```
+
+    3. Migrate 진행
+
+    4. 토큰 생성 코드 작성 : 인증된 사용자에게 자동으로 토큰을 생성해주는 역할
+
+        ```py
+        # accounts/signals.py
+
+        from django.db.models.signals import post_save
+        from django.dispatch import receiver
+        from rest_framework.authtoken.models import Token
+        from django.conf import settings
+
+
+        @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+        def create_auth_token(sender, instance=None, created=False, **kwargs):
+            if created:
+                Token.objects.create(user=instance)
+        ```
+
+### 4. Dj-Rest-Auth 라이브러리
+
+* Dj-Rest-Auth : 회원가입, 인증(소셜미디어 인증 등), 비밀번호 재설정, 사용자 세부 정보 검색, 회원 정보 수정 등 다양한 인증 관련 기능을 제공하는 라이브러리
+
+* Dj-Rest-Auth 설치 및 사용
+
+    1. 설치 및 INSTALL_APPS 등록
+
+        ```s
+        $ pip install dj-rest-auth
+        ```
+
+        ```py
+        # settings.py
+
+        INSTALLED_APPS = [
+            ...
+            'dj_rest_auth',
+            ...
+        ]
+        ```
+    2. project URL에 추가
+
+        ```py
+        # my_api/urls.py
+
+        urlpatterns = [
+            ...
+            path('accounts/', include('dj_rest_auth.urls')),
+            ...
+        ]        
+        ```
+
+* Dj-Rest-Auth의 Registration(등록) 기능 추가 설정
+
+    1. 패키지 추가 설치 및 추가 App 등록
+
+        ```s
+        $ pip install 'dj-rest-auth[with_social]'
+        ```
+
+        ```py
+        # settings.py
+
+        INSTALLED_APPS = [
+            ...
+            'django.contrib.sites',
+            'allauth',
+            'allauth.account',
+            'allauth.socialaccount',
+            'dj_rest_auth.registration',
+            ...
+        ]
+
+        SITE_ID = 1
+
+        ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+        MIDDLEWARE = [
+            ...
+            'allauth.account.middleware.AccountMiddleware',
+            ...
+        ]
+        ```
+
+    2. 추가 URL 등록
+
+        ```py
+        # my_api/urls.py
+
+        urlpatterns = [
+            ...
+            path('accounts/signup/', include('dj_rest_auth.registration.urls')),
+            ...
+        ]
+        ```
+
+    3. Migrate 진행
+
+### 5. Token 발급 및 활용
+
+* 회원가입 및 로그인을 진행하여 토큰 발급
+
+    * 로그인 성공 후 DRF로부터 발급받은 Token 확인 → <span style="color: red;">이 Token을 Vue에서 별도로 저장하여 매 요청마다 함께 보내야 함</span>
+
+        ![image](image/032.PNG)
+
+* 게시글 작성 과정을 통해 Token 사용 방법 익히기
+
+    * Content와 함께 Headers에 발급받은 Token 작성하여 송신
+
+        ![image](image/033.PNG)
+
+        * "Authorization" HTTP Header에 포함
+
+        * 키 앞에는 문자열 "Token"이 와야 하며, 공백으로 두 문자열을 구분해야 함
+
+* **발급받은 Token을 인증이 필요한 요청마다 함께 보내야 함**
+
+### 6. 권한 정책 설정
+
+1. 전역 설정
+
+    * DEFAULT_PERMISSION_CLASSES 사용
+
+        ```py
+        # settings.py
+
+        REST_FRAMEWORK = {
+            ...
+
+            # permission
+            'DEFAULT_PERMISSION_CLASSES': [
+
+            # 지정하지 않을 경우 이 설정은 기본적으로 무제한 액세스를 허용
+                'rest_framework.permissions.AllowAny',
+            ],
+        }        
+        ```
+
+
+2. View 함수별 설정
+
+    * permission_classes 데코레이터를 사용
+
+        ```py
+        # articles/views.py
+
+        # permission Decorators
+        from rest_framework.decorators import permission_classes
+        from rest_framework.permissions import IsAuthenticated
+
+        @api_view(['GET', 'POST'])
+        @permission_classes([IsAuthenticated])
+        def article_list(request):
+            pass
+        ```
+
+### 7. IsAuthenticated 권한 설정
+
+* DRF가 제공하는 권한 정책
+
+    1. <span style="color: green;">IsAuthenticated</span>
+
+        * 인증되지 않은 사용자에 대한 권한을 거부하고, 그렇제 않은 경우 권한을 허용
+
+        * 등록된 사용자만 API에 액세스할 수 있도록 하려는 경우 적합
+
+    2. IsAdminUser
+
+    3. IsAuthenticatedOrReadOnly
+
+    4. ...
+
+* IsAuthenticated 권한 설정
+
+    1. DEFAULT_PERMISSION_CLASSES 관련 내용 작성
+     
+        ```py
+        # settings.py
+
+        REST_FRAMEWORK = {
+          ...
+          'DEFAULT_PERMISSION_CLASSES': [
+              'rest_framework.permissions.AllowAny',
+          ]
+        }
+        ```
+
+        * 기본적으로 모든 View 함수에 대한 접근을 허용
+
+    2. permission_classes 관련 코드 작성
+
+        ```py
+        # articles/views.py
+
+        # permission Decorators
+        from rest_framework.decorators import permission_classes
+        from rest_framework.permissions import IsAuthenticated
+
+        @api_view(['GET', 'POST'])
+        @permission_classes([IsAuthenticated])
+        def article_list(request):
+            pass
+        ```
+        
+        * 전체 게시글 조회 및 생성시에만 인증된 사용자만 진행할 수 있도록 권한 설정
+
+## 5. Authentication with Vue
+
+![image](image/034.PNG)
+
+* 게시글 전체 조회에 401 status code 발생 : 게시글 조회 요청 시 인증에 필요한 수단(token)을 보내지 않고 있으므로 게시글 조회가 불가능해짐
+
+### 1. 회원가입
+
+1. SignUpView route 관련 내용 작성
+
+    ```JS
+    // router/index.js
+
+    import SignUpView from '@/views/SignUpView.vue'
+    
+    const router = createRouter({
+      history: createWebHistory(import.meta.env.BASE_URL),
+        routes: [
+          ...,
+          {
+            path: '/signup',
+            name: 'SignUpView',
+            component: SignUpView
+          },
+        ]
+    })
+    ```
+
+2. 회원가입 form 작성, 사용자 입력 데이터와 바인딩될 반응형 변수 작성
+
+    ```HTML
+    <!-- views/SignUpView.vue -->
+
+    <template>
+      <div>
+        <h1>Sign Up Page</h1>
+        <form>
+          <label for="username">username : </label>
+          <input type="text" id="username" v-model.trim="username"><br>
+
+          <label for="password1">password1 : </label>
+          <input type="password" id="password1" v-model.trim="password1">
+
+          <label for="password2">password2 : </label>
+          <input type="password" id="password2" v-model.trim="password2">
+
+          <input type="submit" value="SignUp">
+        </form>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref } from 'vue'
+
+    const username = ref(null)
+    const password1 = ref(null)
+    const password2 = ref(null)
+    </script>
+    ```
+
+3. signUp 함수 작성
+
+    * 사용자 입력 데이터를 받아 → 서버로 회원가입 요청을 보냄
+
+    * 사용자 입력 데이터를 받는 부분 작성
+
+    ```JS
+    // stores/counter.js
+
+    export const useCounterStore = defineStore('counter', () => {
+      const signUp = function (payload) {
+        const username = payload.username
+        const password1 = payload.password1
+        const password2 = payload.password2
+        // const { username, password1, password2 } = payload
+
+        axios({
+          method: 'post',
+          url: `${API_URL}/accounts/signup/`,
+          data: {
+            username, password1, password2,
+          }
+        })
+          .then ( res => {
+            console.log('회원가입이 완료되었습니다.')
+          } )
+          .catch (err => console.log(err) )
+      }
+      return { ..., signUp }
+    }, { persist: true })
+    ```
+
+    * 서버로 회원가입 요청을 보내는 부분 작성
+
+    ```HTML
+    <!-- views/SignupView.vue -->
+    
+    <template>
+      ...
+      <form @submit.prevent="signUp">
+      ...
+    </template>
+
+    <script>
+      import { useCounterStore } from '@/stores/counter'
+
+      ...
+      const store = useCounterStore()
+      const signUp = function () {
+        const payload = {
+          username: username.value,
+          password1: password1.value,
+          password2: password2.value,
+        }
+        store.signUp(payload)
+      }
+    </script>
+    ```
+
+### 2. 로그인
+
+1. LoginView route 관련 내용 작성
+
+    ```JS
+    // router/index.js
+
+    import LogInView from '@/views/LogInView.vue'
+
+    const router = createRouter({
+      history: createWebHistory(import.meta.env.BASE_URL),
+      routes: [
+        ...,
+        {
+          path: '/login',
+          name: 'LogInView',
+          component: LogInView
+        }
+      ]
+    })
+    ```
+
+2. 로그인 form 및 사용자 입력 데이터와 바인딩될 반응형 변수 작성
+
+    ```HTML
+    <!-- views/LoginView.vue -->
+    
+    <template>
+      <div>
+        <h1>LogIn Page</h1>
+        <form>
+          <label for="username">username : </label>
+          <input type="text" id="username" v-model.trim="username"><br>
+
+          <label for="password">password : </label>
+          <input type="password" id="password" v-model.trim="password"><br>
+
+          <input type="submit" value="logIn">
+        </form>
+      </div>
+    </template>
+
+    <script setup>
+    import { ref } from 'vue'
+
+    const username = ref(null)
+    const password = ref(null)
+    </script>    
+    ```
+
+3. logIn 함수 작성
+
+    * 사용자 입력 데이터를 받아 → 서버로 로그인 요청 및 응답받은 토큰 저장
+
+    * 사용자 입력 데이터를 받는 부분 작성
+
+    ```HTML
+    <!-- views/LoginView.vue -->
+
+    <template>
+      ...
+      <form @submit.prevent="logIn">
+      ...
+    </template>
+
+    <script setup>
+    import { ref } from 'vue'
+    import { useCounterStore } from '@/stores/counter'
+
+    const username = ref(null)
+    const password = ref(null)
+
+    const store = useCounterStore()
+
+    const logIn = function () {
+      const payload = {
+        username: username.value,
+        password: password.value,
+      }
+      store.logIn(payload)
+    }
+    </script>
+    ```
+
+    * 서버로 로그인 요청 부분 작성
+
+    ```JS
+    // stores/counter.js
+    
+    const logIn = function (payload) {
+      const { username, password } = payload
+      axios({
+        method: 'post',
+        url: `${API_URL}/accounts/login/`,
+        data: {
+          username, password,
+        }
+      })
+        .then ( res => {
+          console.log('로그인이 완료되었습니다.')
+          console.log(res.data)
+        } )
+        .catch ( err => console.log(err) )
+    }
+    ```
+
+### 3. 요청과 토큰
+
+* **Token을 store에 저장하여 인증이 필요한 요청마다 함께 보낸다.**
+
+* 반응형 변수 token 선언 및 토큰 저장
+
+    ```JS
+    // stores/counter.js
+
+    export const userCounterStore = defincStore('counter', () => {
+
+      const token = ref(null)
+      ...
+      
+      const logIn = function (payload) {
+        ...
+        .then (res => {
+          token.value = res.data.key
+        } )
+        .catch( err => console.log(err) )
+      }
+      return { ..., token, }
+    }, { persist: true })
+    ```
+
+* 토큰이 필요한 요청
+
+    1. 게시글 전체 목록 조회 시
+
+        * 게시글 전체 목록 조회 요청 함수 getArticles에 token 추가
+
+        ```JS
+        // stores/counter.js
+
+        const getArticles = function () {
+          axios({
+            method: 'get',
+            url: `${API_URL}/api/v1/articles/`,
+            headers: {
+              Authorization: `Token ${token.value}`
+            }
+          })
+            .then(response => {
+              articles.value = response.data
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        }        
+        ```
+
+    2. 게시글 작성 시
+
+        * 게시글 작성 함수 createArticle에 token 추가
+
+        ```JS
+        // views/CreateView.vue
+
+        const createArticle = function () {
+          axios({
+            method: 'post',
+            url: `${store.API_URL}/api/v1/articles/`,
+            data: {
+              title: title.value,
+              content: content.value
+            },
+            headers: {
+              Authorization: `Token ${store.token}`
+            }
+          }) ...
+        }
+        ```
+
+### 4. 인증 여부 확인
+
+* 인증 상태 여부를 나타낼 속성값 지정
+
+    * token 소유 여부에 따라 로그인 상태를 나타낼 isLogin 변수 작성 → computed를 활용해 token 값이 변할 때만 상태를 계산하도록 함
+
+        ```JS
+        // stores/counter.js
+
+        export const useCounterStore = defineStore('counter', () => {
+          const isLogin = computed( () => {
+            return token.value ? true : false
+          } )
+          ...
+          return { ... isLogin, }
+        })
+        ```
+
+* 사용자의 인증(로그인) 여부에 따른 추가 기능 구현
+
+    1. 인증되지 않은 사용자 → 메인 페이지 접근 제한
+
+        * 전역 네비게이션 가드 beforeEach를 활용해 다른 주소에서 메인 페이지로 이동 시 인증되지 않은 사용자라면 로그인 페이지로 이동시키기
+
+    2. 인증된 사용자 → 회원가입 및 로그인 페이지에 접근 제한
+
+        * 다른 주소에서 회원가입 또는 로그인 페이지로 이동 시 이미 인증된 사용자라면 메인 페이지로 이동시키기
+
+        ```JS
+        // router/index.js
+
+        import { useCounterStore } from '@/stores/counter'
+        
+        const router = createRouter({...})
+        router.beforeEach( (to, from) => {
+
+          const store = useCounterStore()
+
+          // 1. 인증되지 않은 사용자 → 메인 페이지 접근 제한
+          if (to.name === 'ArticleView' && !store.isLogin) {
+            window.alert('로그인이 필요합니다.')
+            return { name: 'LogInView' }
+          }
+
+          // 2. 인증된 사용자 → 회원가입 및 로그인 페이지에 접근 제한
+          if ( (to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
+            window.alert('이미 로그인되어 있습니다.')
+            return { name: 'ArticleView' }
+          }
+        } )        
+        ```
+
+### 5. 자연스러운 애플리케이션을 위한 기타 기능 구현
+
+1. 로그인 성공 후 자동으로 메인 페이지로 이동하기
+
+    ```JS
+    // stores/counter.js
+
+    import { useRouter } from 'vue-router'
+
+    export const useCounterStore = defineStore('counter', () => {
+      const router = useRouter()
+
+      const logIn = function (payload) {
+        ...
+          .then ( res => {
+            token.value = res.data.key
+            router.push({ name: 'ArticleView' })
+          } )
+          .catch ( err => console.log(err) )
+      }
+      ...
+    })
+    ```
+
+2. 회원가입 성공 후 자동으로 로그인까지 진행하기
+
+    ```JS
+    // stores/counter.js
+
+    const signUp = function (payload) {
+      ...
+        .then ( res => {
+          const password = password1
+          logIn( { username, password })
+        } )
+        .catch ( err => console.log(err) )
+    }
+    ```
+
+## 0. 참고
+
+* Django Signals
+
+    * **이벤트 알림 시스템**
+
+    * 애플리케이션 내에서 특정 이벤트 발생 시, 다른 부분에게 신호를 보내어 이벤트가 발생헀음을 알릴 수 있음
+
+    * 주로 모델의 데이터 변경 또는 저장, 삭제와 같은 작업에 반응하여 추가적인 로직을 실행하고자 할 때 사용
+
+        * ex) 사용자가 새로운 게시글을 작성할 때마다 특정 작업(예: 이메일 알림 보내기)을 수행하려는 경우
+
+* 환경 변수 (environment variable) : 애플리케이션의 설정이나 동작을 제어하기 위해 사용되는 변수
+
+    * 개발, 테스트 및 프로덕션 환경에서 다르게 설정되어야 하는 설정 값이나 민감한 정보(ex. API key)를 포함
+
+    * 환경 변수를 사용하여 애플리케이션의 설정을 관리하면, 다양한 환경에서 일관된 동작을 유지하면서 필요에 따라 변수를 쉽게 변경할 수 있음
+
+    * 보안적인 이슈를 피하고, 애플리케이션을 다양한 환경에 대응하기 쉽게 만들어 줌
+
+    * [Vite에서 환경변수를 사용하는 법](https://vitejs.dev/guide/env-and-mode.html)
+
+* Vue 프로젝트 진행 시 유용한 자료 
+
+    * Awesome Vue.js : Vue와 관련하여 선별된 유용한 자료를 아카이빙 및 관리하는 프로젝트
+
+        * https://github.com/vuejs/awesome-vue
+
+        * https://awesome-vue.js.org/
+
+    * Vuetify : Vue를 위한 UI 라이브러리 (like 'Bootstrap')
+
+        * https://vuetifyjs.com/en/
+
+* 조회는 모두에게, 작성은 로그인한 사용자에게만 허용할 때
+
+    * GET과 POST 요청 부분을 분리하여 views 함수를 따로 작성하기
+
+    * IsAuthenticatedOrReadOnly 사용하기
+
+        ```py
+        # articles/views.py
+        from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+        # @permission_classes([IsAuthenticated])
+        @permission_classes([IsAuthenticatedOrReadOnly])
+        def article_list_create(request):
+            ...
+        ```
+
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
