@@ -2,35 +2,34 @@ import React, { useState, useEffect } from "react";
 
 const App = () => {
   const [location, setLocation] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      // (pos) => {
-      //   setLocation({
-      //     lat: pos.coords.latitude,
-      //     lon: pos.coords.longitude,
-      //   });
-      // },
-      (pos) => {
-        const { lat, lon } = pos.coords;
+      pos => {
+        const { latitude, longitude } = pos.coords;
         setLocation({
-          lat,
-          lon,
-        });
+          lat: latitude,
+          lng: longitude,
+        })
+        setLoading(false)
       },
-      (error) => console.log(error);
-    );
+      error => {
+        console.log(error)
+        setLoading(false)
+      }
+    )
   }, []);
 
-  setTimeout(() => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      setLocation({
-        lat: pos.coords.latitude,
-        lon: pos.coords.longitude,
-      });
-      console.log(location.lat, location.lon);
-    });
-  }, 3000);
+  // setTimeout(() => {
+  //   navigator.geolocation.getCurrentPosition((pos) => {
+  //     setLocation({
+  //       lat: pos.coords.latitude,
+  //       lon: pos.coords.longitude,
+  //     });
+  //     console.log(location.lat, location.lon);
+  //   });
+  // }, 3000);
 
   // navigator.geolocation.watchPosition(
   //   (pos) => {
@@ -43,10 +42,18 @@ const App = () => {
   //   { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
   // );
 
+  if (loading) {
+    return (
+      <div>
+        <h1>Loading...</h1>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1>Lat: {location.lat}</h1>
-      <h1>Lon: {location.lon}</h1>
+      <h1>Lon: {location.lng}</h1>
     </div>
   );
 };
