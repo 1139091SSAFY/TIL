@@ -39,7 +39,7 @@ const WatchMap = () => {
     }
   }, []);
 
-  // 현재 위치 변경 시
+  // loading 완료 후, <div#map> 생성되어 최초 지도 불러옴
   useEffect(() => {
     // geolocation이 사용 가능하다면
     if (navigator.geolocation) {
@@ -50,7 +50,13 @@ const WatchMap = () => {
           lng: longitude,
         });
       };
-      navigator.geolocation.watchPosition(success);
+      const failure = (error) => console.log(error)
+
+      navigator.geolocation.watchPosition(success, failure, {
+        enableHighAccuracy: true, // true: 더 정확한 위치를 제공받지만 반응 시간/전력 소모 증가, false: 적은 시간/전력으로 위치 정보를 리턴
+        maximumAge: 10000,  // 캐시에 저장한 위치정보를 대신 반환할 수 있는 최대 시간(ms)을 나타내는 양의 long값 (0: 장치가 위치 캐시정보를 사용x, default: Infinity)
+        timeout: 5000,  // 기기가 위치를 반환할 때 소모할 수 있는 최대 시간(ms)을 나타내는 양의 long값(default: Infinity)
+      });
 
       if (mapRef.current) {
         const options = {
@@ -59,6 +65,41 @@ const WatchMap = () => {
         };
         const mapInstance = new kakao.maps.Map(mapRef.current, options);
         setMap(mapInstance);
+
+        // map.setCenter(new kakao.maps.LatLng(location.lat, location.lng));
+      }
+    }
+  }, [loading]);
+
+  // 최초 지도 호출 이후, 위치 변동
+  useEffect(() => {
+    // geolocation이 사용 가능하다면
+    if (navigator.geolocation) {
+      const success = (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({
+          lat: latitude,
+          lng: longitude,
+        });
+      };
+      const failure = (error) => console.log(error)
+
+      navigator.geolocation.watchPosition(success, failure, {
+        enableHighAccuracy: true, // true: 더 정확한 위치를 제공받지만 반응 시간/전력 소모 증가, false: 적은 시간/전력으로 위치 정보를 리턴
+        maximumAge: 10000,  // 캐시에 저장한 위치정보를 대신 반환할 수 있는 최대 시간(ms)을 나타내는 양의 long값 (0: 장치가 위치 캐시정보를 사용x, default: Infinity)
+        timeout: 5000,  // 기기가 위치를 반환할 때 소모할 수 있는 최대 시간(ms)을 나타내는 양의 long값(default: Infinity)
+      });
+
+      if (mapRef.current) {
+        const options = {
+          center: new kakao.maps.LatLng(location.lat, location.lng),
+          level: 1,
+        };
+        // 새 지도를 만들어서...
+        const mapInstance = new kakao.maps.Map(mapRef.current, options);
+        setMap(mapInstance);
+
+        // map.setCenter(new kakao.maps.LatLng(location.lat, location.lng));
       }
     }
   }, [loading, location]);
