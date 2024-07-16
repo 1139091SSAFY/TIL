@@ -1,59 +1,71 @@
 import React, { useState, useEffect } from "react";
+import Stamp from "./Stamp";
+import Map from "./Map";
+import WatchMap from "./WatchMap";
 
 const App = () => {
-  const [location, setLocation] = useState({});
   const [loading, setLoading] = useState(true);
+  const [location, setLocation] = useState({});
+  const [time, setTime] = useState();
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const { latitude, longitude } = pos.coords;
-        setLocation({
-          lat: latitude,
-          lng: longitude,
-        })
-        setLoading(false)
-      },
-      error => {
-        console.log(error)
-        setLoading(false)
-      }
-    )
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          setLocation({
+            lat: latitude,
+            lng: longitude,
+          });
+          setTime(Date(pos.timestamp.toLocaleString()));
+          setLoading(false);
+        },
+        (error) => {
+          console.log(error);
+          setLoading(false);
+          return (
+            <div>
+              <h1>Loading Error. Please refresh this page.</h1>
+            </div>
+          );
+        }
+      );
+    } else {
+      setLoading(false);
+      return (
+        <div>
+          <h1>navigator.geolocation Error</h1>
+        </div>
+      );
+    }
   }, []);
 
-  // setTimeout(() => {
-  //   navigator.geolocation.getCurrentPosition((pos) => {
-  //     setLocation({
-  //       lat: pos.coords.latitude,
-  //       lon: pos.coords.longitude,
-  //     });
-  //     console.log(location.lat, location.lon);
-  //   });
-  // }, 3000);
+  const updateLocation = () => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      setLocation({
+        lat: latitude,
+        lng: longitude,
+      });
+      setTime(Date(pos.timestamp.toLocaleString()));
+    });
+  };
 
-  // navigator.geolocation.watchPosition(
-  //   (pos) => {
-  //     setLocation({
-  //       lat: pos.coords.latitude,
-  //       lon: pos.coords.longitude,
-  //     });
-  //   },
-  //   (error) => console.log(error),
-  //   { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-  // );
+  setInterval(updateLocation, 1000);
 
   if (loading) {
     return (
       <div>
         <h1>Loading...</h1>
       </div>
-    )
+    );
   }
 
   return (
     <div>
-      <h1>Lat: {location.lat}</h1>
-      <h1>Lon: {location.lng}</h1>
+      <Stamp lat={location.lat} lng={location.lng} time={time} />
+      <Map lat={location.lat} lng={location.lng} />
+      <WatchMap lat={location.lat} lng={location.lng} />
     </div>
   );
 };
