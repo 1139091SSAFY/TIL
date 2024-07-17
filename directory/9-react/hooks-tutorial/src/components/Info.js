@@ -1,87 +1,59 @@
-// import React, { useEffect, useState } from "react";
-
-// const Info = () => {
-//   const [name, setName] = useState("");
-//   const [nickname, setNickname] = useState("");
-
-//   useEffect(() => {
-//     // console.log("렌더링이 완료되었습니다!");
-//     // console.log({
-//     //   name,
-//     //   nickname,
-//     // });
-//     console.log("effect");
-//     console.log(name);
-//     return () => {
-//       console.log("cleanup");
-//       console.log(name);
-//     };
-//     // }, [name]);
-//   });
-
-//   useEffect(() => {
-//     console.log("effect");
-//     return () => {
-//       console.log("unmount");
-//     };
-//   }, []);
-
-//   const onChangeName = (e) => {
-//     setName(e.target.value);
-//   };
-
-//   const onChangeNickname = (e) => {
-//     setNickname(e.target.value);
-//   };
-
-//   return (
-//     <div>
-//       <div>
-//         <input value={name} onChange={onChangeName} />
-//         <br />
-//         <input value={nickname} onChange={onChangeNickname} />
-//       </div>
-
-//       <div>
-//         <div>
-//           <b>이름:</b> {name}
-//         </div>
-//       </div>
-//       <div>
-//         <div>
-//           <b>닉네임:</b> {nickname}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Info;
-
-
-///////////////////////////////////////////////////////////////
-
-import React, { useReducer } from "react";
-
-function reducer(state, action) {
-  return {
-    ...state,
-    [action.name]: action.value
-  }
-}
+import { useState, useEffect } from "react";
 
 const Info = () => {
-  const [state, dispatch] = useReducer(reducer, {
-    name: '',
-    nicckname: '',
-  });
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
 
-  const { name, nickname } = state;
-  const onChange = e => {
-    dispatch(e.target);
-  }
+  // useEffect(() => {
+  //   console.log(`마운트될 때만 실행됩니다.`);
+  // }, []);
 
-  return ();
-}
+  // useEffect(() => {
+  //   console.log(`렌더링이 완료되었습니다.`);
+  //   console.log({
+  //     name,
+  //     nickname,
+  //   });
+  // });
+
+  useEffect(() => {
+    console.log("effect");
+  }, [name]);
+
+  useEffect(() => {
+    return () => {
+      console.log("tceffe");
+    };
+  }, [name]);
+
+  // useEffect(() => {
+  //   console.log(name);
+  // }, [name]);
+
+  const onChangeName = (e) => {
+    setName(e.target.value);
+  };
+
+  const onChangeNickname = (e) => {
+    setNickname(e.target.value);
+  };
+
+  return (
+    <div>
+      <div>
+        <input value={name} onChange={onChangeName} />
+        <input value={nickname} onChange={onChangeNickname} />
+      </div>
+      <div>
+        <b>이름: </b>
+        {name}
+      </div>
+      <div>
+        <b>닉네임: </b>
+        {nickname}
+      </div>
+    </div>
+  );
+};
 
 export default Info;

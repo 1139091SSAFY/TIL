@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./WatchMap.css";
+import "../style/Map.css";
 
 const { kakao } = window;
 
@@ -67,32 +67,34 @@ const WatchMap = () => {
       const failure = (error) => console.log(error);
 
       navigator.geolocation.watchPosition(success, failure, {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         maximumAge: 10000,
-        timeout: 5000,
+        // timeout: 50000,
       });
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <h1>WatchMap.js Loading...</h1>
-      </div>
-    );
-  }
+  // unmount 시 실행
+  useEffect(() => {
+    return () => {
+      setLoading(true);
+    };
+  }, []);
+
+  // if (loading) {
+  //   return (
+  //     <div>
+  //       <h1>Map.jsx Loading...</h1>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
-      <h1>WatchMap2.js</h1>
       <h3>Lat: {location.lat} deg</h3>
       <h3>Lng: {location.lng} deg</h3>
 
-      <div
-        id="map"
-        ref={mapRef}
-        style={{ width: "100%", height: "400px" }}
-      ></div>
+      <div id="map" ref={mapRef} />
     </div>
   );
 };
