@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Map from "./components/Map";
 import MapSelectArea from "./components/MapSelectArea";
-import Map2 from './components/Map2';
+import Map2 from "./components/Map2";
+import WatchMap from "./components/Map";
 
 // const App = () => {
 //   return (
@@ -32,7 +33,7 @@ const App = () => {
       <button onClick={() => setShowMap(true)}>Watch Map</button>
       <button onClick={() => setShowMap(false)}>Select Area</button>
       <hr />
-      {showMap ? <Map2 /> : <MapSelectArea />}
+      {showMap ? <WatchMap /> : <MapSelectArea />}
     </div>
   );
 };
