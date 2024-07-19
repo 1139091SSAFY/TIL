@@ -39,7 +39,7 @@ const WatchMap = () => {
     })
   }, []);
 
-  // loading 완료 후, <div#map> 생성되어 최초 지도 불러옴
+  // loading 완료 후(true → false), <div#map> 생성하여 최초 지도 불러옴
   useEffect(() => {
     if (!loading && mapRef.current && !mapInstanceRef.current) {
       const options = {
@@ -69,7 +69,7 @@ const WatchMap = () => {
 
         if (mapInstanceRef.current && markerRef.current) {
           const newPosition = new kakao.maps.LatLng(latitude, longitude);
-          mapInstanceRef.current.setCenter(newPosition);
+          // mapInstanceRef.current.setCenter(newPosition);
           markerRef.current.setPosition(newPosition);
         }
       };
@@ -84,6 +84,7 @@ const WatchMap = () => {
       return () => navigator.geolocation.clearWatch(watchId);
     }
   }, []);
+
   if (loading) {
     return (
       <div>
